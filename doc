@@ -1,0 +1,25 @@
+
+
+https://api.photokrafft.com/api
+admin@gmail.com
+123456
+
+
+- poppins, system ui
+- Background
+
+
+admin login page
+    - Heading (Photokrafft Admin Panel)
+
+Dashboard
+    - New user register
+    - Border radius 15px (8.75rem approx)
+    - ui fix
+
+Customer Manager
+    - New request (status 0)
+    - Inactive ()
+    - Active user 
+
+Crud (Delete)
