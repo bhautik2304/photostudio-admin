@@ -25,7 +25,7 @@ import {
   EcommerceSaleByGender,
   EcommerceWidgetSummary,
   EcommerceSalesOverview,
-  EcommerceLatestProducts,
+  CustomerDemoGraphics,
   EcommerceCurrentBalance,
 } from '../../sections/@dashboard/general/e-commerce';
 import { AppWelcome } from '../../sections/@dashboard/general/app';
@@ -89,13 +89,13 @@ export default function GeneralEcommercePage() {
           <Grid item xs={12} md={3}>
             <EcommerceWidgetSummary
               title="Total Approved Customers"
-              total={data?.user?.users.filter(datas => datas.approved == 1).length}
+              total={data?.customer?.customer.filter(datas => datas.approved === 1).length}
             />
           </Grid>
           <Grid item xs={12} md={3}>
             <EcommerceWidgetSummary
               title="New Customer Request"
-              total={data?.user?.users.filter(datas => datas.approved == 0).length}
+              total={data?.customer?.customer.filter(datas => datas.approved === 0).length}
             />
           </Grid>
 
@@ -106,7 +106,7 @@ export default function GeneralEcommercePage() {
 
           <Grid item xs={6} md={6} lg={6}>
             <div>
-              <EcommerceSalesOverview title="Graph" />
+              <CustomerDemoGraphics title="Graph" />
             </div>
           </Grid>
 

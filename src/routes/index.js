@@ -2,6 +2,7 @@ import { Navigate, useRoutes } from 'react-router-dom';
 // auth
 import AuthGuard from '../auth/AuthGuard';
 import GuestGuard from '../auth/GuestGuard';
+import RoleBasedGuard from '../auth/RoleBasedGuard';
 // layouts
 import MainLayout from '../layouts/main';
 import SimpleLayout from '../layouts/simple';
@@ -67,21 +68,77 @@ export default function Router() {
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
         // { path: 'app', element: <GeneralAppPage /> },
         { path: 'app', element: <DashbordPage /> },
-        { path: 'resorces', element: <Resource /> },
-        { path: 'currency-zone', element: <Currencyzone /> },
+        {
+          path: 'resorces', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <Resource />
+            </RoleBasedGuard>
+        },
+        {
+          path: 'currency-zone', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <Currencyzone />
+            </RoleBasedGuard>
+        },
         // setting
-        { path: 'setting', element: <SettingPage />, },
-        { path: '/setting/adminuser', element: <AdminUser /> },
-        { path: 'adminuser/:id', element: <SettingPage /> },
+        {
+          path: 'setting', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <SettingPage />
+            </RoleBasedGuard>
+          ,
+        },
+        {
+          path: '/setting/adminuser', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <AdminUser />
+            </RoleBasedGuard>
+        },
+        {
+          path: 'adminuser/:id', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <SettingPage />
+            </RoleBasedGuard>
+        },
         // customers
-        { path: 'customer/', element: <CustomerListPage />, },
-        { path: 'customer/profile/:id', element: <CustomerProfile /> },
+        {
+          path: 'customer/', element:
+            <RoleBasedGuard roles={['masteradmin','user']} >
+              <CustomerListPage />
+            </RoleBasedGuard>
+        },
+        {
+          path: 'customer/profile/:id', element:
+            <RoleBasedGuard roles={['masteradmin','user']} >
+              <CustomerProfile />
+            </RoleBasedGuard>
+        },
         // products
-        { path: 'products', element: <ProductList /> },
-        { path: 'products/edit/:id', element: <EditeProduct /> },
+        {
+          path: 'products', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <ProductList />
+            </RoleBasedGuard>
+        },
+        {
+          path: 'products/edit/:id', element:
+            <RoleBasedGuard roles={['masteradmin']} >
+              <EditeProduct />
+            </RoleBasedGuard>
+        },
         // orders
-        { path: 'orders', element: <Orders />, },
-        { path: 'orders/detail/:id', element: <OrderEditeage /> },
+        {
+          path: 'orders', element:
+            <RoleBasedGuard roles={['masteradmin','user']} >
+              <Orders />
+            </RoleBasedGuard>
+        },
+        {
+          path: 'orders/detail/:id', element:
+            <RoleBasedGuard roles={['masteradmin','user']} >
+              <OrderEditeage />
+            </RoleBasedGuard>
+        },
       ],
     },
   ]);

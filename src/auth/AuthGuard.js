@@ -19,7 +19,15 @@ AuthGuard.propTypes = {
   children: PropTypes.node,
 };
 
+const authStatus={
+  inilized:'Inilized',
+  authticated:'authticated',
+  unAuthticated:'unAuthticated',
+}
+
 export default function AuthGuard({ children }) {
+
+  const [state,setState]=useState(authStatus.inilized)
 
   const tokens = localStorage.getItem('accessToken')
 
@@ -33,9 +41,11 @@ export default function AuthGuard({ children }) {
     if (tokens) {
       axios.post(apiRoutes.session, { token: tokens }).then(((e)=>{
         if (e.data.code === 200) {
-          // setInilized(false)
+          setState(authStatus.authticated)
           dispatch(login(e.data))
           // navigate(PATH_AUTH.login)
+        } else {
+          setState(authStatus.unAuthticated)
         }
       }))
     }else {
@@ -43,6 +53,14 @@ export default function AuthGuard({ children }) {
     } 
 
   },[dispatch, tokens,navigate])
+
+  if (state === authStatus.inilized) {
+    return <LoadingScreen />
+  }
+
+  if (state === authStatus.unAuthticated) {
+    return <Login />
+  }
 
   return <> {children} </>;
 }

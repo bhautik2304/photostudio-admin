@@ -86,7 +86,7 @@ export default function InvoiceTableRow({
               <Link
                 noWrap
                 variant="body2"
-                onClick={onViewRow}
+                onClick={()=>onEditRow()}
                 sx={{ color: 'text.disabled', cursor: 'pointer' }}
               >
                 {`INV-${order_no}`}

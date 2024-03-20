@@ -58,7 +58,7 @@ export default function InvoiceNewEditAddress({ data }) {
           </Typography>
         </Stack>
 
-        <AddressInfo name={capitalizeFirstLetter(data?.costomer?.name)} compunysname={capitalizeFirstLetter(data?.costomer?.compunys_name)} address={data?.costomer?.address} phone={data?.costomer?.phone_no} />
+        <AddressInfo name={capitalizeFirstLetter(data?.costomer?.name)} compunysname={capitalizeFirstLetter(data?.costomer?.compunys_name)} address={data?.delivery_address !== "0" ? data?.delivery_address : data?.costomer?.address} phone={data?.costomer?.phone_no} />
 
       </Stack>
     </Stack>

@@ -19,29 +19,25 @@ import {
   Checkbox,
   Card,
   Select,
+  FormControl,
+  InputLabel,
 } from '@mui/material';
-import axios from 'axios';
-import { useSnackbar } from 'notistack';
 import { useDispatch, useSelector } from 'react-redux';
-
-import { fetchcountryzone } from '../../../../redux/thunk';
-import { apiRoutes } from '../../../../constants';
 import { TableNoData, TableHeadCustom } from '../../../../components/table';
 import Scrollbar from '../../../../components/scrollbar';
 import Iconify from '../../../../components/iconify';
-import Image from '../../../../components/image';
 import MenuPopover from '../../../../components/menu-popover';
 import { fDate } from '../../../../utils/formatTime';
 import { api } from '../../../../Api/api';
+import { fetchAdminUsers } from '../../../../redux/slices/user';
 
 const TABLE_HEAD = [
-  { id: '' },
-  { id: '' },
-  { id: '' },
-  { id: '' },
-  { id: '' },
-  { id: '' },
-  // { id: '' },
+  { id: 'invoiceNumber', label: '#', align: 'left' },
+  { id: 'invoiceNumber', label: 'Name', align: 'left' },
+  { id: 'invoiceNumber', label: 'Mobile No.', align: 'left' },
+  { id: 'invoiceNumber', label: 'Email Id', align: 'left' },
+  { id: 'invoiceNumber', label: 'Created At', align: 'left' },
+  { id: 'invoiceNumber', label: 'Action', align: 'right' },
 ];
 const countryzoneData = {
   name: '',
@@ -49,6 +45,7 @@ const countryzoneData = {
   email: '',
   password: '',
   img: '',
+  role: '',
 };
 function AdminUser() {
   const [open, setOpen] = useState(false);
@@ -56,96 +53,63 @@ function AdminUser() {
   const [data, setData] = useState(countryzoneData);
   const [openPopover, setOpenPopover] = useState(null);
   const disapatch = useDispatch();
+  const [error,setError]=useState({
+    email:false,
+    mobile:false,
+  })
   const { users } = useSelector((state) => state.user);
 
   // create orientation
 
+
+  const onSuccess = () => {
+    setData(countryzoneData);
+    disapatch(fetchAdminUsers())
+    setOpen(!open);
+  };
+  const oneRROR = () => {
+    setData(countryzoneData);
+    setOpen(!open);
+  };
   const submit = () => {
-    const id = toast.loading("Please wait...")
     const formData = new FormData();
     formData.append('name', data.name);
     formData.append('phone_no', data.phone_no);
     formData.append('email', data.email);
     formData.append('password', data.password);
     formData.append('img', data.img);
-    api.userModule.create(formData)
-      .then((res) => {
-        // console.log(res)
-        if (!res.status === 200) {
-          toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-          setOpen(!open);
-          setTimeout(() => {
-            toast.dismiss(id)
-          }, 5000);
-          return;
-        }
-        if (res.data.success) {
-          disapatch(fetchcountryzone());
-          setData(countryzoneData);
-          setOpen(!open);
+    formData.append('role', data.role);
 
-          toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-          setTimeout(() => {
-            toast.dismiss(id)
-          }, 5000);
-        }
-        toast.error(res.data.message)
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          toast.dismiss(id)
-        }, 5000);
-      });
+    api.userModule.create(formData, onSuccess, oneRROR);
   };
 
   // update orientation
 
   const updateOrientation = () => {
     console.log(data);
-
-    const id = toast.loading('Please wait...');
     const formDatas = new FormData();
     formDatas.append('name', data.name);
     formDatas.append('phone_no', data.phone_no);
     formDatas.append('email', data.email);
     formDatas.append('password', data.password);
     formDatas.append('img', data.img);
+    formDatas.append('role', data.role);
 
-    api.userModule.update(data.id,formDatas)
-      .then((res) => {
-        if (!res.status === 200) {
-          setUpdate(false);
-          setOpen(!open);
-          toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-          setTimeout(() => {
-            toast.dismiss(id);
-          }, 5000);
-          return;
-        }
-        if (res.data.success) {
-          disapatch(fetchcountryzone());
-          setData(countryzoneData);
-          setUpdate(false);
-          setOpen(!open);
-          toast.update(id, { render: res.data.message, type: 'success', isLoading: false });
-          setTimeout(() => {
-            toast.dismiss(id);
-          }, 5000);
-          return;
-        }
-        toast.update(id, { render: res.data.message, type: 'error', isLoading: false });
-        setTimeout(() => {
-          toast.dismiss(id);
-        }, 5000);
-      }).catch((err) => {
-        console.log(err);
-        toast.update(id, { render: 'some thing went wrong', type: 'error', isLoading: false });
-        setTimeout(() => {
-          toast.dismiss(id);
-        }, 5000);
-      });
+    api.userModule.update(
+      data.id,
+      formDatas,
+      () => {
+        setUpdate(false);
+        setOpen(!open);
+        disapatch(fetchAdminUsers())
+        setData(countryzoneData) 
+      },
+      () => {
+        setUpdate(false);
+        setOpen(!open); 
+        setData(countryzoneData) 
+      }
+    );
   };
 
   // delete orientation
@@ -168,7 +132,7 @@ function AdminUser() {
         // success logic
         if (res.data.success) {
           toast.update(id, { render: res.data.message, type: 'success', isLoading: false });
-          disapatch(fetchcountryzone());
+          disapatch(fetchAdminUsers());
           setTimeout(() => {
             toast.dismiss(id);
           }, 5000);
@@ -274,7 +238,7 @@ function AdminUser() {
 
                         <MenuItem
                           onClick={() => {
-                            setData({...row,password:''});
+                            setData({ ...row, password: '' });
                             setUpdate(!update);
                             setOpen(!open);
                             handleClosePopover();
@@ -304,9 +268,7 @@ function AdminUser() {
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DialogTitle>
-          Create New User
-        </DialogTitle>
+        <DialogTitle>Create New User</DialogTitle>
         <DialogContent>
           <Stack spacing={2}>
             <TextField
@@ -318,21 +280,41 @@ function AdminUser() {
             <TextField
               fullWidth
               label="User Mobile"
+              error={error.mobile}
               onChange={(e) => setData({ ...data, phone_no: e.target.value })}
               value={data.phone_no}
             />
             <TextField
               fullWidth
               label="User Email"
+              error={error.email}
               onChange={(e) => setData({ ...data, email: e.target.value })}
               value={data.email}
             />
-            <TextField
-              fullWidth
-              label="User Password"
-              onChange={(e) => setData({ ...data, password: e.target.value })}
-              value={data.password}
-            />
+            {!update && (
+              <TextField
+                fullWidth
+                label="User Password"
+                onChange={(e) => setData({ ...data, password: e.target.value })}
+                value={data.password}
+              />
+            )}
+
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">User Role</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                // value={data.role}
+                defaultValue={data.role}
+                label="Age"
+                onChange={(e) => setData({ ...data, role: e.target.value })}
+              >
+                <MenuItem value="masteradmin">Master Admin</MenuItem>
+                <MenuItem value="user">User</MenuItem>
+                {/* <MenuItem value={30}>Thirty</MenuItem> */}
+              </Select>
+            </FormControl>
             <TextField
               type="file"
               fullWidth

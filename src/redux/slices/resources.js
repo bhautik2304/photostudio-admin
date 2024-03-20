@@ -5,8 +5,8 @@ import { apiRoutes } from '../../constants'
 
 export const fetchProduct = createAsyncThunk('Product', async () => {
     const response = await axios(apiRoutes.costomer).then(res => res.data)
-    return response.data
-    // return response.data
+    return response.data.reverse()
+    // return response.data.reverse()
 })
 const initialState = {
 

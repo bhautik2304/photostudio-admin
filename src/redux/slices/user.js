@@ -4,7 +4,7 @@ import { api } from '../../Api/api'
 
 export const fetchAdminUsers = createAsyncThunk('adminusers', async () => {
     const response = await api.userModule.read().then(res => res.data)
-    return response.users
+    return response.data
     // return response.data
 })
 const initialState = {

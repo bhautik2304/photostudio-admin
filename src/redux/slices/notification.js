@@ -1,13 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
-import { apiRoutes } from '../../constants'
-
-
-export const fetchProduct = createAsyncThunk('Product', async () => {
-    const response = await axios(apiRoutes.costomer).then(res => res.data)
-    return response.data
-    // return response.data
-})
+import { fetchNotifications } from '../thunk/index'
 
 const initialState = {
     isLoading: false,
@@ -21,14 +13,14 @@ const Notification = createSlice({
     initialState,
     reducers: {},
     extraReducers: {
-        [fetchProduct.fulfilled]: (state, action) => {
-            state.customer = action.payload || []
+        [fetchNotifications.fulfilled]: (state, action) => {
+            state.notification = action.payload || []
             state.isLoading = false
         },
-        [fetchProduct.pending]: (state, action) => {
+        [fetchNotifications.pending]: (state, action) => {
             state.isLoading = true
         },
-        [fetchProduct.rejected]: (state, action) => {
+        [fetchNotifications.rejected]: (state, action) => {
             state.error = action.error.message
             state.isLoading = false
         }

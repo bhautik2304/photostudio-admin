@@ -1,20 +1,35 @@
-import React, { useState } from 'react'
-import { Button, MenuItem, DialogTitle, Dialog, DialogActions, DialogContent, Stack, TextField, Table, TableBody, TableCell, TableContainer, TableRow, IconButton, Checkbox, Card } from '@mui/material'
-import axios from 'axios'
-import { useSnackbar } from 'notistack'
-import { useDispatch, useSelector } from 'react-redux'
-
-import { fetchsheet } from '../../../../redux/thunk'
-import { apiRoutes } from '../../../../constants'
+import React, { useState } from 'react';
 import {
-  TableNoData,
-  TableHeadCustom,
-} from '../../../../components/table';
+  Button,
+  MenuItem,
+  DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Stack,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  IconButton,
+  Checkbox,
+  Card,
+} from '@mui/material';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { fetchsheet } from '../../../../redux/thunk';
+import { apiRoutes } from '../../../../constants';
+import { TableNoData, TableHeadCustom } from '../../../../components/table';
 import Scrollbar from '../../../../components/scrollbar';
 import Iconify from '../../../../components/iconify';
 import Image from '../../../../components/image';
 import MenuPopover from '../../../../components/menu-popover';
 import { fDate } from '../../../../utils/formatTime';
+import { api } from '../../../../Api/api';
 
 const TABLE_HEAD = [
   { id: '#', label: '#', align: 'left' },
@@ -27,57 +42,31 @@ const TABLE_HEAD = [
 const sheetData = {
   name: '',
   value: '',
-}
-
+};
 
 function Sheet() {
-
-
-  const [open, setOpen] = useState(false)
-  const [update, setUpdate] = useState(false)
-  const [data, setData] = useState(sheetData)
-  const disapatch = useDispatch()
-  const { sheet } = useSelector(state => state.resource)
+  const [open, setOpen] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [data, setData] = useState(sheetData);
+  const disapatch = useDispatch();
+  const { sheet } = useSelector((state) => state.resource);
   const [openPopover, setOpenPopover] = useState(null);
-  // create orientation 
+  // create orientation
 
   const submit = () => {
     // const id = toast.loading("Please wait...")
     console.log(data);
 
-    const formData = new FormData()
-    formData.append('name', data.name)
+    const formData = new FormData();
+    formData.append('name', data.name);
     // formData.append('value', data.value)
-    formData.append('img', data.img)
-    axios.post(apiRoutes.sheetReq, formData).then(res => {
-      // console.log(res)
-      if (!res.status === 200) {
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setOpen(!open)
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        disapatch(fetchsheet())
-        setData(sheetData)
-        setOpen(!open)
-
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-      }
-      // toast.error(res.data.message)
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    formData.append('img', data.img);
+    api.productResourceApi.sheet.Create(formData, () => {
+      disapatch(fetchsheet());
+      setData(sheetData);
+      setOpen(!open);
+    });
+  };
 
   // update orientation
 
@@ -85,77 +74,27 @@ function Sheet() {
     console.log(data);
 
     // const id = toast.loading("Please wait...")
-    const formDatas = new FormData()
-    formDatas.append('name', data.name)
-    formDatas.append('value', data.value)
-    formDatas.append('img', data.img)
+    const formDatas = new FormData();
+    formDatas.append('name', data.name);
+    formDatas.append('value', data.value);
+    formDatas.append('img', data.img);
 
-    axios.post(`${apiRoutes.sheetReq}update/${data.id}`, formDatas).then(res => {
-      if (!res.status === 200) {
-        setUpdate(false)
-        setOpen(!open)
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        disapatch(fetchsheet())
-        setData(sheetData)
-        setUpdate(false)
-        setOpen(!open)
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      // toast.update(id, { render: res.data.message, type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    api.productResourceApi.sheet
+      .Update(data.id, formDatas, () => {
+        disapatch(fetchsheet());
+        setData(sheetData);
+        setUpdate(false);
+        setOpen(!open);
+      })
+  };
 
   // delete orientation
-  const deleteFnc = (ids) => {
+  const deleteFnc = (id) => {
     // const id = toast.loading("Please wait...")
-    axios.delete(apiRoutes.sheetReq + ids).then(res => {
-      console.log(res.data);
-      if (!res.status === 200) {
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        disapatch(fetchsheet())
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      // toast.update(id, { render: res.data.message, type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
+    api.productResourceApi.sheet.Delete(id,()=>{
+      disapatch(fetchsheet());
     })
-  }
+  };
 
   const handleOpenPopover = (event) => {
     setOpenPopover(event.currentTarget);
@@ -165,25 +104,37 @@ function Sheet() {
     setOpenPopover(null);
   };
 
-
   return (
     <Card>
-      <Stack spacing={2} className='my-3' sx={{ p: 2 }} direction='row' alignItems='center' justifyContent='space-between'  >
+      <Stack
+        spacing={2}
+        className="my-3"
+        sx={{ p: 2 }}
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <b>Sheets</b>
-        <Button variant="contained" onClick={() => {
-          setUpdate(false)
-          setData(sheet)
-          setOpen(!open)
-        }} color="primary">Create Paper Sheet</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setUpdate(false);
+            setData(sheet);
+            setOpen(!open);
+          }}
+          color="primary"
+        >
+          Create Paper Sheet
+        </Button>
       </Stack>
       {/* <Card> */}
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-          <Scrollbar>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHeadCustom headLabel={TABLE_HEAD} />
-              <TableBody>
-
-                {sheet ? sheet.map((row, key) =>
+      <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <Scrollbar>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHeadCustom headLabel={TABLE_HEAD} />
+            <TableBody>
+              {sheet ? (
+                sheet.map((row, key) => (
                   <>
                     <TableRow hover>
                       <TableCell padding="checkbox">
@@ -197,7 +148,7 @@ function Sheet() {
                             visibleByDefault
                             alt={row.name}
                             src={row.img}
-                            sx={{ borderRadius: 1.5, width: 48, height: 48,marginRight:2.5 }}
+                            sx={{ borderRadius: 1.5, width: 48, height: 48, marginRight: 2.5 }}
                           />
                           {row.name}
                         </Stack>
@@ -209,20 +160,39 @@ function Sheet() {
                       {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
 
                       <TableCell align="right">
-                        <IconButton color={openPopover ? 'primary' : 'default'} onClick={handleOpenPopover}>
-                          <Iconify icon="eva:more-vertical-fill" />
-                        </IconButton>
-                      </TableCell>
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                setData(row);
+                                setUpdate(!update);
+                                setOpen(!open);
+                                // handleClosePopover();
+                              }}
+                            >
+                              <Iconify icon="eva:edit-fill" />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={() => {
+                                deleteFnc(row.id);
+                                // handleClosePopover();
+                              }}
+                            >
+                              <Iconify icon="eva:trash-2-outline" />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
                     </TableRow>
                     <MenuPopover
                       open={openPopover}
                       onClose={handleClosePopover}
                       arrow="right-top"
-                      sx={{ width: 140,boxShadow:'none' }}
+                      sx={{ width: 140, boxShadow: 'none' }}
                     >
                       <MenuItem
                         onClick={() => {
-                          deleteFnc(row.id)
+                          deleteFnc(row.id);
                           handleClosePopover();
                         }}
                         sx={{ color: 'error.main' }}
@@ -244,43 +214,60 @@ function Sheet() {
                       </MenuItem>
                     </MenuPopover>
                   </>
-                ) : <TableNoData isNotFound={1} />}
-              </TableBody>
-            </Table>
-          </Scrollbar>
-        </TableContainer>
+                ))
+              ) : (
+                <TableNoData isNotFound={1} />
+              )}
+            </TableBody>
+          </Table>
+        </Scrollbar>
+      </TableContainer>
       {/* </Card> */}
       {/* crete modal */}
       <Dialog
         open={open}
         onClose={() => {
-          setUpdate(false)
-          setOpen(!open)
+          setUpdate(false);
+          setOpen(!open);
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DialogTitle>
-          Create New Paper Sheet
-        </DialogTitle>
+        <DialogTitle>Create New Paper Sheet</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ marginTop: 1 }}>
-            <TextField fullWidth label='Paper Sheet Name' onChange={(e) => setData({ ...data, name: e.target.value })} value={data.name} />
-            <TextField type='file' fullWidth placeholder='Orientation Name' onChange={(e) => setData({ ...data, img: e.target.files[0] })} />
+            <TextField
+              fullWidth
+              label="Paper Sheet Name"
+              onChange={(e) => setData({ ...data, name: e.target.value })}
+              value={data.name}
+            />
+            <TextField
+              type="file"
+              fullWidth
+              placeholder="Orientation Name"
+              onChange={(e) => setData({ ...data, img: e.target.files[0] })}
+            />
           </Stack>
           <DialogActions>
-            {update ?
+            {update ? (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="warning" onClick={updateOrientation} >Update</Button>
-              </div> :
+                <Button variant="contained" fullWidth color="warning" onClick={updateOrientation}>
+                  Update
+                </Button>
+              </div>
+            ) : (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="primary" onClick={submit} >Create</Button>
-              </div>}
+                <Button variant="contained" fullWidth color="primary" onClick={submit}>
+                  Create
+                </Button>
+              </div>
+            )}
           </DialogActions>
         </DialogContent>
-      </Dialog >
+      </Dialog>
     </Card>
-  )
+  );
 }
 
-export default Sheet
+export default Sheet;

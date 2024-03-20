@@ -5,9 +5,9 @@ import { useDispatch } from 'react-redux';
 // @mui
 import { Box } from '@mui/material';
 // // channels
-// import Echo from 'laravel-echo';
-// import Pusher from 'pusher-js';
-
+import Echo from 'laravel-echo';
+import Pusher from 'pusher-js';
+import { toast } from 'react-toastify';
 // hooks
 import useResponsive from '../../hooks/useResponsive';
 // components
@@ -22,17 +22,17 @@ import { Alert } from '../../components/alert/index';
 import { fetchCustomer } from '../../redux/slices/customer';
 import { fetchOrder } from '../../redux/slices/order';
 
-import { fetchOrientation, fetchSize, fetchcountryzone,fetchboxsleeveupgradesReq, fetchsheet, fetchcovers, fetchcoversupgrades, fetchcolors, fetchboxsleeve, fetchproduct, fetchpaper } from '../../redux/thunk';
+import { fetchOrientation, fetchSize,fetchNotifications, fetchcountryzone, fetchboxsleeveupgradesReq, fetchsheet, fetchcovers, fetchcoversupgrades, fetchcolors, fetchboxsleeve, fetchproduct, fetchpaper } from '../../redux/thunk';
 import { api } from '../../Api/api';
 import { fetchAdminUsers } from '../../redux/slices/user';
 // ----------------------------------------------------------------------
 
-// const echo = new Echo({
-//   broadcaster: 'pusher',
-//   key: '81314e8a37e2b6f4535b',
-//   cluster: 'ap2',
-//   forceTLS: true
-// });
+const echo = new Echo({
+  broadcaster: 'pusher',
+  key: '81314e8a37e2b6f4535b',
+  cluster: 'ap2',
+  forceTLS: true
+});
 
 export default function DashboardLayout() {
   const { themeLayout } = useSettingsContext();
@@ -73,26 +73,27 @@ export default function DashboardLayout() {
     dispatch(fetchproduct())
     dispatch(fetchpaper())
     dispatch(fetchOrder())
+    dispatch(fetchNotifications())
 
-    api.customerApi.Read().then((e)=>{
+    api.customerApi.Read().then((e) => {
       console.log(e.data);
     })
 
   }, [])
 
-  // useEffect(() => {
-  //   echo.channel('newcostomerreqest')
-  //     .listen('newcostomerrequist', (e) => {
-  //       // Alert.success('Order Created')
-  //       dispatch(fetchCustomer())
-  //     })
-  //     .listen('OrderUpdated', (e) => {
-  //       // Alert.success('Order Updated')
-  //     })
-  //     .listen('OrderDeleted', (e) => {
-  //       // Alert.success('Order Deleted')
-  //     })
-  // }, [])
+  useEffect(() => {
+    echo.channel('notification')
+      .listen('notification', (e) => {
+        toast.success(e.msg.msg)
+        if (e.msg.type === "customer") {
+          dispatch(fetchCustomer())
+          dispatch(fetchNotifications())
+        } else {
+          dispatch(fetchNotifications())
+          dispatch(fetchOrder())
+        }
+      })
+  }, [])
 
   const renderNavVertical = <NavVertical openNav={open} onCloseNav={handleClose} />;
 
@@ -146,7 +147,6 @@ export default function DashboardLayout() {
         {renderNavVertical}
 
         <Main>
-
           <Outlet />
         </Main>
       </Box>

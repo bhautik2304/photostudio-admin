@@ -18,6 +18,7 @@ import Iconify from '../../components/iconify';
 import FormProvider, { RHFTextField } from '../../components/hook-form';
 import { apiRoutes } from '../../constants';
 import { login } from '../../redux/slices/AuthSlice';
+import { api } from '../../Api/api';
 
 // ----------------------------------------------------------------------
 
@@ -38,21 +39,17 @@ export default function AuthLoginForm() {
   const onSubmit = async () => {
     setSubmit(true)
 
-    axios.post(apiRoutes.login, formData)
+    api.authApi.login(formData, () => setSubmit(false))
       .then((e) => {
         dispatch(login(e.data))
         if (e.data.code === 200) {
-          console.log("successfully");
+          
           navigate(PATH_DASHBOARD.dashbord, { replace: true })
           setSubmit(false)
           return
         }
+        setErrors(true)
         setSubmit(false)
-      })
-      .catch((e) => {
-        console.log(e)
-        setSubmit(false)
-        // setErrors()
       })
   };
 
@@ -61,15 +58,22 @@ export default function AuthLoginForm() {
   return (
     <>
       <Stack spacing={3}>
-        {!!errorMsg && <Alert severity="error">{errorMsg}</Alert>}
-
-        <TextField name="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} label="Email address" />
+        {
+          errors && !!errorMsg && <Alert severity="error">{errorMsg}</Alert>
+        }
+        <TextField name="email" value={formData.email} onChange={(e) => {
+          setFormData({ ...formData, email: e.target.value })
+          setErrors(false)
+        }} label="Email address" />
 
         <TextField
           name="password"
           label="Password"
           value={formData.password}
-          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          onChange={(e) => {
+            setFormData({ ...formData, password: e.target.value })
+            setErrors(false)
+          }}
           type={showPassword ? 'text' : 'password'}
           InputProps={{
             endAdornment: (
@@ -107,7 +111,7 @@ export default function AuthLoginForm() {
           bgcolor: 'text.primary',
           color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
           '&:hover': {
-            bgcolor: ()=>'text.primary',
+            bgcolor: () => 'text.primary',
             color: (theme) => (theme.palette.mode === 'light' ? 'common.white' : 'grey.800'),
           },
         }}

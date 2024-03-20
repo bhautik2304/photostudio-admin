@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { noCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 // @mui
 import {
   Box,
@@ -17,9 +17,11 @@ import {
   ListSubheader,
   ListItemAvatar,
   ListItemButton,
+  Drawer
 } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 // utils
-import { fToNow } from '../../../utils/formatTime';
+import { fToNow, fDateTime } from '../../../utils/formatTime';
 // _mock_
 import { _notifications } from '../../../_mock/arrays';
 // components
@@ -27,6 +29,8 @@ import Iconify from '../../../components/iconify';
 import Scrollbar from '../../../components/scrollbar';
 import MenuPopover from '../../../components/menu-popover';
 import { IconButtonAnimate } from '../../../components/animate';
+import { api } from '../../../Api/api';
+import { fetchNotifications } from '../../../redux/thunk';
 
 // ----------------------------------------------------------------------
 
@@ -35,7 +39,6 @@ export default function NotificationsPopover() {
 
   const [notifications, setNotifications] = useState(_notifications);
 
-  const totalUnRead = notifications.filter((item) => item.isUnRead === true).length;
 
   const handleOpenPopover = (event) => {
     setOpenPopover(event.currentTarget);
@@ -54,6 +57,11 @@ export default function NotificationsPopover() {
     );
   };
 
+  const dispatch = useDispatch()
+  const { notification } = useSelector((data) => data.notification)
+  // useEffect(()=>)
+  const totalUnRead = notification.filter((item) => item.status === true).length;
+
   return (
     <>
       <IconButtonAnimate
@@ -61,12 +69,83 @@ export default function NotificationsPopover() {
         onClick={handleOpenPopover}
         sx={{ width: 40, height: 40 }}
       >
-        <Badge badgeContent={totalUnRead} color="error">
+        <Badge badgeContent={notification.filter((item) => item.status === 0).length} color="error">
           <Iconify icon="eva:bell-fill" />
         </Badge>
       </IconButtonAnimate>
 
-      <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 360, p: 0 }}>
+      <Drawer open={openPopover} onClose={handleClosePopover}>
+        <Box sx={{ width: 500, height: '100%', p: 0 }} >
+          <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="subtitle1">Notifications</Typography>
+
+              <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+                You have {notification.filter((item) => item.status === 0).length} unread messages
+              </Typography>
+            </Box>
+
+            <Tooltip title=" Mark all as read">
+              <IconButton color="primary" onClick={() =>
+                api.notifications.readAll().then(() => {
+                  dispatch(fetchNotifications())
+                })}>
+                <Iconify icon="eva:done-all-fill" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title=" Delete all">
+              <IconButton color="error" onClick={() => api.notifications.deleteAll().then(() => {
+                dispatch(fetchNotifications())
+              })}>
+                <Iconify icon="eva:trash-fill" />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          <Divider sx={{ borderStyle: 'dashed' }} />
+
+          <Scrollbar sx={{ height: { xs: 340, sm: 'auto' } }}>
+            <List
+              disablePadding
+              subheader={
+                <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                  Latest
+                </ListSubheader>
+              }
+            >
+              {notification.slice().reverse().map((notificationss) => {
+                console.log(notificationss);
+                return (
+                  <NotificationItem key={notification.id} notification={notificationss} />
+                )
+              })}
+            </List>
+
+            {/* <List
+              disablePadding
+              subheader={
+                <ListSubheader disableSticky sx={{ py: 1, px: 2.5, typography: 'overline' }}>
+                  Before that
+                </ListSubheader>
+              }
+            >
+              {notification.slice(2, 5).map((notificationss) => (
+                <NotificationItem key={notification.id} notification={notificationss} />
+              ))}
+            </List> */}
+          </Scrollbar>
+
+          <Divider sx={{ borderStyle: 'dashed' }} />
+
+        </Box>
+        {/* <Box sx={{ p: 1 }}>
+            <Button fullWidth disableRipple>
+              View All
+            </Button>
+          </Box> */}
+      </Drawer>
+
+      {/* <MenuPopover open={openPopover} onClose={handleClosePopover} sx={{ width: 360, p: 0 }}>
         <Box sx={{ display: 'flex', alignItems: 'center', py: 2, px: 2.5 }}>
           <Box sx={{ flexGrow: 1 }}>
             <Typography variant="subtitle1">Notifications</Typography>
@@ -122,7 +201,7 @@ export default function NotificationsPopover() {
             View All
           </Button>
         </Box>
-      </MenuPopover>
+      </MenuPopover> */}
     </>
   );
 }
@@ -131,41 +210,37 @@ export default function NotificationsPopover() {
 
 NotificationItem.propTypes = {
   notification: PropTypes.shape({
-    id: PropTypes.string,
-    avatar: PropTypes.node,
-    type: PropTypes.string,
-    title: PropTypes.string,
-    isUnRead: PropTypes.bool,
-    description: PropTypes.string,
-    createdAt: PropTypes.instanceOf(Date),
+    status: PropTypes.bool,
+    msg: PropTypes.string,
+    created_at: PropTypes.instanceOf(Date),
   }),
 };
 
 function NotificationItem({ notification }) {
-  const { avatar, title } = renderContent(notification);
-
+  const { msg } = notification;
+  console.log(notification);
   return (
     <ListItemButton
       sx={{
         py: 1.5,
         px: 2.5,
         mt: '1px',
-        ...(notification.isUnRead && {
-          bgcolor: 'action.selected',
+        ...(notification.status === 0 && {
+          bgcolor: '#d5f3e6',
         }),
       }}
     >
       <ListItemAvatar>
-        <Avatar sx={{ bgcolor: 'background.neutral' }}>{avatar}</Avatar>
+        <img alt='' src="/assets/icons/notification/ic_mail.svg" />
       </ListItemAvatar>
 
       <ListItemText
         disableTypography
-        primary={title}
+        primary={msg}
         secondary={
           <Stack direction="row" sx={{ mt: 0.5, typography: 'caption', color: 'text.disabled' }}>
             <Iconify icon="eva:clock-fill" width={16} sx={{ mr: 0.5 }} />
-            <Typography variant="caption">{fToNow(notification.createdAt)}</Typography>
+            <Typography variant="caption">{`${fToNow(notification.created_at)} ${fDateTime(notification.created_at)}`}</Typography>
           </Stack>
         }
       />
@@ -178,9 +253,9 @@ function NotificationItem({ notification }) {
 function renderContent(notification) {
   const title = (
     <Typography variant="subtitle2">
-      {notification.title}
+      {notification.msg}
       <Typography component="span" variant="body2" sx={{ color: 'text.secondary' }}>
-        &nbsp; {noCase(notification.description)}
+        {/* &nbsp; {noCase(notification.description)} */}
       </Typography>
     </Typography>
   );

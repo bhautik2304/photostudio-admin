@@ -6,7 +6,7 @@ import { api } from '../../Api/api'
 
 export const fetchOrder = createAsyncThunk('orderReq', async () => {
     const response = await api.ordersApi.Read().then(res => res.data)
-    return response.orders
+    return response.data.reverse()
     // return response.data
 })
 const initialState = {

@@ -12,12 +12,14 @@ import {
   IconButton,
   Typography,
 } from '@mui/material';
+import { Link } from 'react-router-dom';
 // components
 import Label from '../../../../components/label';
 import Iconify from '../../../../components/iconify';
 import MenuPopover from '../../../../components/menu-popover';
 import ConfirmDialog from '../../../../components/confirm-dialog';
 import { CustomAvatar } from '../../../../components/custom-avatar';
+import { PATH_DASHBOARD } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -41,7 +43,7 @@ const getColorByName = (name) => {
 };
 
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
-  const { name, compunys_name, phone_no, country, status } = row;
+  const { name, compunys_name, phone_no, country, status,id } = row;
 
   const [openConfirm, setOpenConfirm] = useState(false);
 
@@ -74,9 +76,11 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           <Stack direction="row" alignItems="center" spacing={2}>
             <CustomAvatar sx={{ height: 40, width: 40, }} name={name} />
 
-            <Typography variant="subtitle2" noWrap>
-              {name}
-            </Typography>
+            <Link to={PATH_DASHBOARD.customer.customerProfile(id)} >
+              <Typography color='InfoText' variant="subtitle2" noWrap>
+                {name}
+              </Typography>
+            </Link>
           </Stack>
         </TableCell>
 
@@ -130,7 +134,7 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
           <Iconify icon="eva:edit-fill" />
           Edit
         </MenuItem>
-        
+
       </MenuPopover>
 
       <ConfirmDialog

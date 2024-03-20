@@ -16,7 +16,7 @@ import { capitalizeFirstLetter } from '../../../../utils/string';
 // ----------------------------------------------------------------------
 
 const PAYMET_STATUS_OPTIONS = ['pending', 'paid', 'credit'];
-const ORDER_STATUS_OPTIONS = ['pending', 'processing', 'completed', 'cancel'];
+const ORDER_STATUS_OPTIONS = ['pending', 'processing','dispatch', 'completed', 'cancel'];
 
 // ----------------------------------------------------------------------
 

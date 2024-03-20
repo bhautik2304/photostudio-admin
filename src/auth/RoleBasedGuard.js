@@ -2,6 +2,7 @@ import PropTypes from 'prop-types';
 import { m } from 'framer-motion';
 // @mui
 import { Container, Typography } from '@mui/material';
+import { useDispatch, useSelector } from 'react-redux';
 // components
 import { MotionContainer, varBounce } from '../components/animate';
 // assets
@@ -19,13 +20,13 @@ RoleBasedGuard.propTypes = {
 
 export default function RoleBasedGuard({ hasContent, roles, children }) {
   // Logic here to get current user role
-  const { user } = useAuthContext();
+  const { user } = useSelector(state => state.auth);
 
   // const currentRole = 'user';
   const currentRole = user?.role; // admin;
 
   if (typeof roles !== 'undefined' && !roles.includes(currentRole)) {
-    return hasContent ? (
+    return (
       <Container component={MotionContainer} sx={{ textAlign: 'center' }}>
         <m.div variants={varBounce().in}>
           <Typography variant="h3" paragraph>
@@ -43,7 +44,7 @@ export default function RoleBasedGuard({ hasContent, roles, children }) {
           <ForbiddenIllustration sx={{ height: 260, my: { xs: 5, sm: 10 } }} />
         </m.div>
       </Container>
-    ) : null;
+    );
   }
 
   return <> {children} </>;

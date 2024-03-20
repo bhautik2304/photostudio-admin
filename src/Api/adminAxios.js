@@ -4,7 +4,7 @@ const token = localStorage.getItem('accessToken') || null
 
 const adminAxios = axios.create({
     headers:{
-        Accesstoken: token
+        Accesstoken: token,
     }
 });
 

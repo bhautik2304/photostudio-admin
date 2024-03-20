@@ -1,21 +1,40 @@
 /* eslint-disable no-plusplus */
-import React, { useState } from 'react'
-import { Button, MenuItem,Autocomplete, DialogTitle, Dialog, DialogActions, DialogContent, Stack, TextField, Table, TableBody, TableCell, TableContainer, TableRow, IconButton, Checkbox, Card } from '@mui/material'
-import axios from 'axios'
-import { useSnackbar } from 'notistack'
-import { useDispatch, useSelector } from 'react-redux'
-
-import { fetchcoversupgrades } from '../../../../redux/thunk'
-import { apiRoutes } from '../../../../constants'
+import React, { Fragment, useState } from 'react';
 import {
-  TableNoData,
-  TableHeadCustom,
-} from '../../../../components/table';
+  Button,
+  MenuItem,
+  Autocomplete,
+  DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Stack,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  IconButton,
+  Checkbox,
+  Card,
+  Select,
+  FormControl,
+  InputLabel,
+} from '@mui/material';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { fetchcoversupgrades } from '../../../../redux/thunk';
+import { apiRoutes } from '../../../../constants';
+import { TableNoData, TableHeadCustom } from '../../../../components/table';
 import Scrollbar from '../../../../components/scrollbar';
 import Iconify from '../../../../components/iconify';
 import Image from '../../../../components/image';
 import MenuPopover from '../../../../components/menu-popover';
 import { fDate } from '../../../../utils/formatTime';
+import { api } from '../../../../Api/api';
 
 const TABLE_HEAD = [
   { id: '#', label: '#', align: 'left' },
@@ -24,12 +43,6 @@ const TABLE_HEAD = [
   { id: 'created_at', label: 'Created at', align: 'left' },
   { id: '', label: '', align: 'left' },
 ];
-const colorData = {
-  id: generateRandomId(),
-  name: '',
-  code: '',
-  img: ''
-};
 
 const coverupgardeData = {
   name: '',
@@ -41,14 +54,14 @@ const coverupgardeData = {
 function CoverUpgrade() {
   const [open, setOpen] = useState(false);
   const [update, setUpdate] = useState(false);
+  const [coverType, setCoverType] = useState(false);
+  const [coverUpgradeSelect, setCoverUpgradeSelect] = useState([]);
   const [data, setData] = useState(coverupgardeData);
   const dispatch = useDispatch();
-  const { cover, coverupgrade,color } = useSelector(state => state.resource);
+  const { cover, coverupgrade, color } = useSelector((state) => state.resource);
   const [openPopover, setOpenPopover] = useState(null);
 
-
   const submit = () => {
-    // const id = toast.loading('Please wait...');
     const formData = new FormData();
 
     formData.append('name', data.name);
@@ -62,67 +75,40 @@ function CoverUpgrade() {
       formData.append(`colors[${index}]`, colors);
     });
 
-
-    axios.post(apiRoutes.coversupgradesReq, formData)
-      .then(res => handleResponse(res, null, 'create'))
-      .catch(handleError);
+    api.productResourceApi.coversupgrades.Create(formData, () => {
+      setOpen(false);
+      dispatch(fetchcoversupgrades());
+      setData(coverupgardeData);
+    });
   };
 
   const updateOrientation = () => {
-    // const id = toast.loading('Please wait...');
     const formDatas = new FormData();
     formDatas.append('name', data.name);
     formDatas.append('img', data.img);
 
-    axios.post(`${apiRoutes.coversupgradesReq}update/${data.id}`, formDatas)
-      .then(res => handleResponse(res, null, 'update'))
-      .catch(handleError);
-  };
-
-  const handleResponse = (res, id = null, action) => {
-    if (res.status !== 200 || !res.data.success) {
-      handleError(id);
-      return;
-    }
-
-    if (action === 'create') {
-      // toast.update(id, { render: res.data.message, type: 'success', isLoading: false });
-    } else if (action === 'update') {
+    api.productResourceApi.coversupgrades.Update(data.id, formDatas, () => {
+      setOpen(false);
+      dispatch(fetchcoversupgrades());
+      setData(coverupgardeData);
       setUpdate(false);
-      // toast.update(id, { render: res.data.message, type: 'success', isLoading: false });
-    } else if (action === 'delete') {
-      // toast.update(id, { render: res.data.message, type: 'success', isLoading: false });
-    }
-
-    setOpen(false);
-    dispatch(fetchcoversupgrades());
-    setData(coverupgardeData);
-    setTimeout(() => {
-      // toast.dismiss(id);
-    }, 5000);
+    });
+  };
+  const deleteFnc = (ids) => {
+    api.productResourceApi.coversupgrades.Delete(ids, () => {
+      dispatch(fetchcoversupgrades());
+    });
   };
 
-  const handleError = err => {
-    console.log(err);
-    // toast.error('Something went wrong');
-  };
-
-  const deleteFnc = ids => {
-    // const id = toast.loading('Please wait...');
-    axios.delete(apiRoutes.coversupgradesReq + ids)
-      .then(res => handleResponse(res, null, 'delete'))
-      .catch(handleError);
-  };
-
-  const handleColorDelete = (index) => {
-    const updatedColors = [...data.colors];
-    updatedColors.splice(index, 1); // Remove the color at the specified index
-    setData({ ...data, colors: updatedColors });
-  };
+  // const handleColorDelete = (index) => {
+  //   const updatedColors = [...data.colors];
+  //   updatedColors.splice(index, 1); // Remove the color at the specified index
+  //   setData({ ...data, colors: updatedColors });
+  // };
 
   const handleOpenPopover = (event) => {
     setOpenPopover(event.currentTarget);
-  }; 
+  };
 
   const handleClosePopover = () => {
     setOpenPopover(null);
@@ -130,152 +116,188 @@ function CoverUpgrade() {
 
   return (
     <Card>
-      <Stack spacing={2} className='my-3' sx={{ p: 2 }} direction='row' alignItems='center' justifyContent='space-between'  >
+      <Stack
+        spacing={2}
+        className="my-3"
+        sx={{ p: 2 }}
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <b>Covers Upgrade</b>
-        <Button variant="contained" onClick={() => {
-          setUpdate(false)
-          setData(cover)
-          setOpen(!open)
-        }} color="primary">Create Cover Upgrade</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setUpdate(false);
+            setData(cover);
+            setOpen(!open);
+          }}
+          color="primary"
+        >
+          Create Cover Upgrade
+        </Button>
       </Stack>
       {/* <Card> */}
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-          <Scrollbar>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHeadCustom headLabel={TABLE_HEAD} />
-              <TableBody>
+      <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <Scrollbar>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHeadCustom headLabel={TABLE_HEAD} />
+            <TableBody>
+              {coverupgrade ? (
+                coverupgrade.map((row, key) => {
+                  console.log(row);
+                  return (
+                    <Fragment key={key}>
+                      <TableRow hover>
+                        <TableCell padding="checkbox">
+                          <Checkbox />
+                        </TableCell>
 
-                {coverupgrade ? coverupgrade.map((row, key) =>
-                  <>
-                    <TableRow hover>
-                      <TableCell padding="checkbox">
-                        <Checkbox />
-                      </TableCell>
+                        <TableCell>
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <Image
+                              disabledEffect
+                              visibleByDefault
+                              alt={row.name}
+                              src={row.img}
+                              sx={{ borderRadius: 1.5, width: 48, height: 48, marginRight: 2.5 }}
+                            />
+                            {row.name}
+                          </Stack>
+                        </TableCell>
 
-                      <TableCell>
-                        <Stack direction="row" alignItems="center" spacing={2}>
-                          <Image
-                            disabledEffect
-                            visibleByDefault
-                            alt={row.name}
-                            src={row.img}
-                            sx={{ borderRadius: 1.5, width: 48, height: 48,marginRight:2.5 }}
-                          />
-                          {row.name}
-                        </Stack>
-                      </TableCell>
+                        {/* <TableCell>{row.value}</TableCell> */}
+                        <TableCell>{fDate(row.created_at)}</TableCell>
 
-                      {/* <TableCell>{row.value}</TableCell> */}
-                      <TableCell>{fDate(row.created_at)}</TableCell>
+                        {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
 
-                      {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
-
-                      <TableCell align="right">
-                        <IconButton color={openPopover ? 'primary' : 'default'} onClick={handleOpenPopover}>
-                          <Iconify icon="eva:more-vertical-fill" />
-                        </IconButton>
-                      </TableCell>
-                    </TableRow>
-                    <MenuPopover
-                      open={openPopover}
-                      onClose={handleClosePopover}
-                      arrow="right-top"
-                      sx={{ width: 140, boxShadow: 'none' }}
-                    >
-                      <MenuItem
-                        onClick={() => {
-                          deleteFnc(row.id)
-                          handleClosePopover();
-                        }}
-                        sx={{ color: 'error.main' }}
-                      >
-                        <Iconify icon="eva:trash-2-outline" />
-                        Delete
-                      </MenuItem>
-
-                      <MenuItem
-                        onClick={() => {
-                          setData(row);
-                          setUpdate(!update);
-                          setOpen(!open);
-                          handleClosePopover();
-                        }}
-                      >
-                        <Iconify icon="eva:edit-fill" />
-                        Edit
-                      </MenuItem>
-                    </MenuPopover>
-                  </>
-                ) : <TableNoData isNotFound={1} />}
-              </TableBody>
-            </Table>
-          </Scrollbar>
-        </TableContainer>
+                        <TableCell align="right">
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                setData(row);
+                                setUpdate(!update);
+                                setOpen(!open);
+                                // handleClosePopover();
+                              }}
+                            >
+                              <Iconify icon="eva:edit-fill" />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={() => {
+                                deleteFnc(row.id);
+                                // handleClosePopover();
+                              }}
+                            >
+                              <Iconify icon="eva:trash-2-outline" />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
+                      </TableRow>
+                    </Fragment>
+                  );
+                })
+              ) : (
+                <TableNoData isNotFound={1} />
+              )}
+            </TableBody>
+          </Table>
+        </Scrollbar>
+      </TableContainer>
       {/* </Card> */}
       {/* crete modal */}
       <Dialog
         open={open}
         onClose={() => {
-          setUpdate(false)
-          setOpen(!open)
+          setUpdate(false);
+          setOpen(!open);
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DialogTitle>
-          Create New Cover Upgrade
-        </DialogTitle>
+        <DialogTitle>Create New Cover Upgrade</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ marginTop: 1 }}>
-          <Autocomplete
-              id="multiple-limit-tags"
-              options={cover.map((datas)=>({title:datas.name,id:datas.id}))}
-              getOptionLabel={(option) => option.title}
-              onChange={(d,newValue)=>{
-                setData((prevData) => ({...prevData,cover_id:newValue.id}));
-              }}
-              // defaultValue={[top100Films[13], top100Films[12], top100Films[11]]}
-              renderInput={(params) => (
-                <TextField {...params} label="Select Cover" placeholder="Cover" />
-              )}
-              sx={{ width: '500px' }}
+            {!update && (
+              <FormControl fullWidth sx={{ textAlign: 'left' }}>
+                <InputLabel
+                  id="demo-simple-select-helper-label"
+                  sx={{ backgroundColor: '#fff', paddingLeft: 1, paddingRight: 1 }}
+                >
+                  Cover
+                </InputLabel>
+                <Select
+                  name=""
+                  onChange={(e) => setData({ ...data, cover_id: e.target.value })}
+                  id=""
+                  defaultValue={data.cover_id}
+                  label="Cover"
+                  sx={{ color: '#000' }}
+                >
+                  {cover
+                    .filter((datas) => datas.type !== 'both_img')
+                    .map((dats) => (
+                      <MenuItem value={dats.id}>{dats.name}</MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            )}
+            <TextField
+              fullWidth
+              label="Cover Option Name"
+              onChange={(e) => setData({ ...data, name: e.target.value })}
+              value={data.name}
             />
-            <TextField fullWidth label='Cover Option Name' onChange={(e) => setData({ ...data, name: e.target.value })} value={data.name} />
-            <TextField type='file' fullWidth placeholder='Orientation Name' onChange={(e) => setData({ ...data, img: e.target.files[0] })} />
-            <Autocomplete
-              multiple
-              id="multiple-limit-tags"
-              options={color.map((datas)=>({title:datas.color,id:datas.id}))}
-              getOptionLabel={(option) => option.title}
-              onChange={(d,newValue)=>{
-                setData((prevData) => ({
-                  ...prevData,
-                  colors: newValue.map((selectedColor) => selectedColor.id),
-                }));
-              }}
-              // defaultValue={[top100Films[13], top100Films[12], top100Films[11]]}
-              renderInput={(params) => (
-                <TextField {...params} label="Select Color" placeholder="Color" />
-              )}
-              sx={{ width: '500px' }}
+            <TextField
+              type="file"
+              fullWidth
+              placeholder="Orientation Name"
+              onChange={(e) => setData({ ...data, img: e.target.files[0] })}
             />
+            {!update && (
+              <Autocomplete
+                multiple
+                fullWidth
+                id="multiple-limit-tags"
+                options={color.map((datas) => ({ title: datas.color, id: datas.id }))}
+                getOptionLabel={(option) => option.title}
+                onChange={(d, newValue) => {
+                  setData((prevData) => ({
+                    ...prevData,
+                    colors: newValue.map((selectedColor) => selectedColor.id),
+                  }));
+                }}
+                // defaultValue={[top100Films[13], top100Films[12], top100Films[11]]}
+                renderInput={(params) => (
+                  <TextField {...params} label="Select Color" fullWidth placeholder="Color" />
+                )}
+              />
+            )}
           </Stack>
           <DialogActions>
-            {update ?
+            {update ? (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="warning" onClick={updateOrientation} >Update</Button>
-              </div> :
+                <Button variant="contained" fullWidth color="warning" onClick={updateOrientation}>
+                  Update
+                </Button>
+              </div>
+            ) : (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="primary" onClick={submit} >Create</Button>
-              </div>}
+                <Button variant="contained" fullWidth color="primary" onClick={submit}>
+                  Create
+                </Button>
+              </div>
+            )}
           </DialogActions>
         </DialogContent>
-      </Dialog >
+      </Dialog>
     </Card>
-  )
+  );
 }
 
-export default CoverUpgrade
+export default CoverUpgrade;
 
 function generateRandomId(length = 8) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';

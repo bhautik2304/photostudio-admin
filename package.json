@@ -4,7 +4,6 @@
     "version": "4.3.0",
     "description": "Javascript Version",
     "private": true,
-    "proxy": "https://api.photokrafft.com/",
     "scripts": {
         "start": "react-scripts start",
         "build": "react-scripts build",

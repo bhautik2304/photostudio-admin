@@ -1,24 +1,40 @@
-import React, { useState } from 'react'
-import { Button, MenuItem, DialogTitle, Dialog, DialogActions, DialogContent, Stack, TextField, Table, TableBody, TableCell, TableContainer, TableRow, IconButton, Checkbox, Card, Typography } from '@mui/material'
-import axios from 'axios'
-import { useDispatch, useSelector } from 'react-redux'
-
-import { fetchOrientation } from '../../../../redux/thunk'
-import { apiRoutes } from '../../../../constants'
+import React, { useState } from 'react';
 import {
-  TableNoData,
-  TableHeadCustom,
-} from '../../../../components/table';
+  Button,
+  MenuItem,
+  DialogTitle,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Stack,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  IconButton,
+  Checkbox,
+  Card,
+  Typography,
+} from '@mui/material';
+import axios from 'axios';
+import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import { fetchOrientation } from '../../../../redux/thunk';
+import { apiRoutes } from '../../../../constants';
+import { TableNoData, TableHeadCustom } from '../../../../components/table';
 import Scrollbar from '../../../../components/scrollbar';
 import Iconify from '../../../../components/iconify';
 import Image from '../../../../components/image';
 import MenuPopover from '../../../../components/menu-popover';
 import { fDate } from '../../../../utils/formatTime';
+import { api } from '../../../../Api/api';
 
 const OrientationData = {
   name: '',
-  img: ''
-}
+  img: '',
+};
 
 const TABLE_HEAD = [
   { id: '#', label: '#', align: 'left' },
@@ -28,132 +44,55 @@ const TABLE_HEAD = [
 ];
 
 function Orientation() {
-
-  const [open, setOpen] = useState(false)
-  const [update, setUpdate] = useState(false)
-  const [data, setData] = useState(OrientationData)
+  const [open, setOpen] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [data, setData] = useState(OrientationData);
   const [openPopover, setOpenPopover] = useState(null);
 
-  const disapatch = useDispatch()
-  const { orientation } = useSelector(state => state.resource)
+  const disapatch = useDispatch();
+  const { orientation } = useSelector((state) => state.resource);
 
-  // create orientation 
+  // create orientation
 
   const submit = () => {
-    // const id = toast.loading("Please wait...")
+   
     console.log(data);
 
-    const formData = new FormData()
-    formData.append('name', data.name)
-    formData.append('img', data.img)
-    axios.post(apiRoutes.orientationReq, formData).then(res => {
-      // console.log(res)
-      if (!res.status === 200) {
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setOpen(!open)
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        disapatch(fetchOrientation())
-        setData(OrientationData)
-        setOpen(!open)
-
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-
-      }
-      // toast.error(res.data.message)
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('img', data.img);
+    api.productResourceApi.orientation.Create(formData, () => {
+      // setOpen(!open)
+      disapatch(fetchOrientation());
+      setData(OrientationData);
+      setOpen(!open);
+    });
+  };
 
   // update orientation
 
   const updateOrientation = () => {
     console.log(data);
 
-    // const id = toast.loading("Please wait...")
-    const formDatas = new FormData()
-    formDatas.append('name', data.name)
-    formDatas.append('img', data.img)
+   
+    const formDatas = new FormData();
+    formDatas.append('name', data.name);
+    formDatas.append('img', data.img);
 
-    axios.post(`${apiRoutes.orientationReq}update/${data.id}`, formDatas).then(res => {
-      if (!res.status === 200) {
-        setUpdate(false)
-        setOpen(!open)
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        disapatch(fetchOrientation())
-        setData(OrientationData)
-        setUpdate(false)
-        setOpen(!open)
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      // toast.update(id, { render: res.data.message, type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    api.productResourceApi.orientation.Update(data.id, formDatas, () => {
+      disapatch(fetchOrientation());
+      setData(OrientationData);
+      setUpdate(false);
+      setOpen(!open);
+    });
+  };
 
   // delete orientation
   const deleteFnc = (ids) => {
-    // const id = toast.loading("Please wait...")
-    axios.delete(apiRoutes.orientationReq + ids).then(res => {
-      console.log(res.data);
-      if (!res.status === 200) {
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        disapatch(fetchOrientation())
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      // toast.update(id, { render: res.data.message, type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
-
+    api.productResourceApi.orientation.Delete(ids, () => {
+      disapatch(fetchOrientation());
+    });
+  };
 
   const handleOpenPopover = (event) => {
     setOpenPopover(event.currentTarget);
@@ -167,23 +106,36 @@ function Orientation() {
     <Card>
       {/* <Divider /> */}
       {/* <Stack spacing={2} className='my-3' sx={{ p: 2 }} direction='row' alignItems='end' justifyContent='end'  > */}
-      <Stack spacing={2} className='my-3' sx={{ p: 2 }} direction='row' alignItems='center' justifyContent='space-between'  >
+      <Stack
+        spacing={2}
+        className="my-3"
+        sx={{ p: 2 }}
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <b>Orientation</b>
-        <Button variant="contained" onClick={() => {
-          setUpdate(false)
-          setData(OrientationData)
-          setOpen(!open)
-        }} color="primary">Create Orientations</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setUpdate(false);
+            setData(OrientationData);
+            setOpen(!open);
+          }}
+          color="primary"
+        >
+          Create Orientations
+        </Button>
       </Stack>
       {/* <Card> */}
-        <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
-          <Scrollbar>
-            <Table stickyHeader aria-label="sticky table">
-              <TableHeadCustom
-                order={orientation}
-                // orderBy={orderBy}
-                headLabel={TABLE_HEAD}
-                rowCount={orientation.length}
+      <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
+        <Scrollbar>
+          <Table stickyHeader aria-label="sticky table">
+            <TableHeadCustom
+              order={orientation}
+              // orderBy={orderBy}
+              headLabel={TABLE_HEAD}
+              rowCount={orientation.length}
               // numSelected={selected.length}
               // onSort={onSort}
               // onSelectAllRows={(checked) =>
@@ -192,10 +144,10 @@ function Orientation() {
               //     tableData.map((row) => row.id)
               //   )
               // }
-              />
-              <TableBody>
-
-                {orientation ? orientation.map((row, key) =>
+            />
+            <TableBody>
+              {orientation ? (
+                orientation.map((row, key) => (
                   <>
                     <TableRow hover>
                       <TableCell padding="checkbox">
@@ -211,9 +163,7 @@ function Orientation() {
                             src={row.img}
                             sx={{ borderRadius: 1.5, width: 48, height: 48 }}
                           />
-                          <Typography sx={{marginY:5}} >
-                            {row.name}
-                          </Typography>
+                          <Typography sx={{ marginY: 5 }}>{row.name}</Typography>
                         </Stack>
                       </TableCell>
 
@@ -222,10 +172,29 @@ function Orientation() {
                       {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
 
                       <TableCell align="right">
-                        <IconButton color={openPopover ? 'primary' : 'default'} onClick={handleOpenPopover}>
-                          <Iconify icon="eva:more-vertical-fill" />
-                        </IconButton>
-                      </TableCell>
+                          <Stack direction="row" alignItems="center" spacing={2}>
+                            <IconButton
+                              color="primary"
+                              onClick={() => {
+                                setData(row);
+                                setUpdate(!update);
+                                setOpen(!open);
+                                // handleClosePopover();
+                              }}
+                            >
+                              <Iconify icon="eva:edit-fill" />
+                            </IconButton>
+                            <IconButton
+                              color="error"
+                              onClick={() => {
+                                deleteFnc(row.id);
+                                // handleClosePopover();
+                              }}
+                            >
+                              <Iconify icon="eva:trash-2-outline" />
+                            </IconButton>
+                          </Stack>
+                        </TableCell>
                     </TableRow>
                     <MenuPopover
                       open={openPopover}
@@ -235,7 +204,7 @@ function Orientation() {
                     >
                       <MenuItem
                         onClick={() => {
-                          deleteFnc(row.id)
+                          deleteFnc(row.id);
                           handleClosePopover();
                         }}
                         sx={{ color: 'error.main' }}
@@ -257,44 +226,61 @@ function Orientation() {
                       </MenuItem>
                     </MenuPopover>
                   </>
-                ) : <TableNoData isNotFound={1} />}
-              </TableBody>
-            </Table>
-          </Scrollbar>
-        </TableContainer>
+                ))
+              ) : (
+                <TableNoData isNotFound={1} />
+              )}
+            </TableBody>
+          </Table>
+        </Scrollbar>
+      </TableContainer>
       {/* </Card> */}
       {/* crete modal */}
       <Dialog
         open={open}
         onClose={() => {
-          setUpdate(false)
-          setOpen(!open)
+          setUpdate(false);
+          setOpen(!open);
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DialogTitle>
-          Create a new Orientation
-        </DialogTitle>
+        <DialogTitle>Create a new Orientation</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ marginTop: 1 }}>
-            <TextField fullWidth label='Orientation Name' onChange={(e) => setData({ ...data, name: e.target.value })} value={data.name} />
-            <TextField type='file' fullWidth placeholder='Orientation Name' onChange={(e) => setData({ ...data, img: e.target.files[0] })} />
+            <TextField
+              fullWidth
+              label="Orientation Name"
+              onChange={(e) => setData({ ...data, name: e.target.value })}
+              value={data.name}
+            />
+            <TextField
+              type="file"
+              fullWidth
+              placeholder="Orientation Name"
+              onChange={(e) => setData({ ...data, img: e.target.files[0] })}
+            />
           </Stack>
           <DialogActions>
-            {update ?
+            {update ? (
               <div className="my-3">
                 {/* <Button variant="contained" fullWidth color="warning" onClick={updateOrientation} >Update</Button> */}
-                <Button variant="contained" fullWidth color="primary" onClick={updateOrientation} >Update</Button>
-              </div> :
+                <Button variant="contained" fullWidth color="primary" onClick={updateOrientation}>
+                  Update
+                </Button>
+              </div>
+            ) : (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="primary" onClick={submit} >Create</Button>
-              </div>}
+                <Button variant="contained" fullWidth color="primary" onClick={submit}>
+                  Create
+                </Button>
+              </div>
+            )}
           </DialogActions>
         </DialogContent>
-      </Dialog >
+      </Dialog>
     </Card>
-  )
+  );
 }
 
-export default Orientation
+export default Orientation;

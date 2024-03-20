@@ -19,14 +19,14 @@ AccountBilling.propTypes = {
 
 export default function AccountBilling({ cards, addressBook, invoices }) {
 
-const [data,setData] =useState([])
-const { id } = useParams()
-const { orders } = useSelector(state => state.order)
+  const [data, setData] = useState([])
+  const { id } = useParams()
+  const { orders } = useSelector(state => state.order)
 
-useEffect(()=>{
-  // eslint-disable-next-line eqeqeq
-setData(orders.filter((datas) => Number(datas?.user_id) == id).reverse())
-}, [id, orders])
+  useEffect(() => {
+    // eslint-disable-next-line eqeqeq
+    setData(orders.filter((datas) => Number(datas?.user_id) == id).reverse())
+  }, [id, orders])
 
   console.log(data);
   // console.log();
@@ -39,7 +39,7 @@ setData(orders.filter((datas) => Number(datas?.user_id) == id).reverse())
       </Grid>
 
       <Grid item xs={12} md={6}>
-    <AccountBillingInvoiceHistory invoices={data} />
+        <AccountBillingInvoiceHistory invoices={data} />
       </Grid>
     </Grid>
   );

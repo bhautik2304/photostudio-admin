@@ -1,20 +1,38 @@
-import React, { useState } from 'react'
-import { Button, MenuItem, DialogTitle, Select,InputLabel, FormControl, Dialog, DialogActions, DialogContent, Stack, TextField, Table, TableBody, TableCell, TableContainer, TableRow, IconButton, Checkbox, Card } from '@mui/material'
-import axios from 'axios'
-import { useSnackbar } from 'notistack'
-import { useDispatch, useSelector } from 'react-redux'
-
-import { fetchboxsleeve } from '../../../../redux/thunk'
-import { apiRoutes } from '../../../../constants'
+import React, { useState } from 'react';
 import {
-  TableNoData,
-  TableHeadCustom,
-} from '../../../../components/table';
+  Button,
+  MenuItem,
+  DialogTitle,
+  Select,
+  InputLabel,
+  FormControl,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Stack,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  IconButton,
+  Checkbox,
+  Card,
+} from '@mui/material';
+import axios from 'axios';
+import { useSnackbar } from 'notistack';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { fetchboxsleeve } from '../../../../redux/thunk';
+import { apiRoutes } from '../../../../constants';
+import { TableNoData, TableHeadCustom } from '../../../../components/table';
 import Scrollbar from '../../../../components/scrollbar';
 import Iconify from '../../../../components/iconify';
 import Image from '../../../../components/image';
 import MenuPopover from '../../../../components/menu-popover';
 import { fDate } from '../../../../utils/formatTime';
+import { api } from '../../../../Api/api';
 
 const TABLE_HEAD = [
   { id: '#', label: '#', align: 'left' },
@@ -28,56 +46,31 @@ const coverData = {
   name: '',
   img: '',
   type: '',
-}
+};
 function BoxSleeve() {
-  const [open, setOpen] = useState(false)
-  const [update, setUpdate] = useState(false)
-  const [data, setData] = useState(coverData)
+  const [open, setOpen] = useState(false);
+  const [update, setUpdate] = useState(false);
+  const [data, setData] = useState(coverData);
   const [openPopover, setOpenPopover] = useState(null);
-  const disapatch = useDispatch()
-  const { boxsleev } = useSelector(state => state.resource)
+  const disapatch = useDispatch();
+  const { boxsleev } = useSelector((state) => state.resource);
 
-  // create orientation 
+  // create orientation
 
   const submit = () => {
     // const id = toast.loading("Please wait...")
     console.log(data);
 
-    const formData = new FormData()
-    formData.append('name', data.name)
-    formData.append('type', data.type)
-    formData.append('img', data.img)
-    axios.post(apiRoutes.boxsleeveReq, formData).then(res => {
-
-      // console.log(res)
-      if (!res.status === 200) {
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setOpen(!open)
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        disapatch(fetchboxsleeve())
-        setData(coverData)
-        setOpen(!open)
-
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-
-      }
-      // toast.error(res.data.message)
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    const formData = new FormData();
+    formData.append('name', data.name);
+    formData.append('type', data.type);
+    formData.append('img', data.img);
+    api.productResourceApi.boxsleeve.Create(formData, () => {
+      disapatch(fetchboxsleeve());
+      setData(coverData);
+      setOpen(!open);
+    });
+  };
 
   // update orientation
 
@@ -85,83 +78,27 @@ function BoxSleeve() {
     console.log(data);
 
     // const id = toast.loading("Please wait...")
-    const formDatas = new FormData()
-    formDatas.append('name', data.name)
-    formDatas.append('img', data.img)
+    const formDatas = new FormData();
+    formDatas.append('name', data.name);
+    formDatas.append('type', data.type);
+    formDatas.append('img', data.img);
 
-    axios.post(`${apiRoutes.boxsleeveReq}update/${data.id}`, formDatas).then(res => {
-      if (!res.status === 200) {
-        setUpdate(false)
-        setOpen(!open)
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      if (res.data.success) {
-        disapatch(fetchboxsleeve())
-        setData(coverData)
-        setUpdate(false)
-        setOpen(!open)
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-      // toast.update(id, { render: res.data.message, type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    api.productResourceApi.boxsleeve.Update(data.id, formDatas, () => {
+      disapatch(fetchboxsleeve());
+      setData(coverData);
+      setUpdate(false);
+      setOpen(!open);
+    });
+  };
 
   // delete orientation
 
   const deleteFnc = (ids) => {
     // const id = toast.loading("Please wait...")
-    axios.delete(apiRoutes.boxsleeveReq + ids).then(res => {
-      console.log(res.data);
-
-      // error logic
-      if (!res.status === 200) {
-        // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-
-      // success logic 
-      if (res.data.success) {
-        // toast.update(id, { render: res.data.message, type: "success", isLoading: false });
-        disapatch(fetchboxsleeve())
-        setTimeout(() => {
-          // toast.dismiss(id)
-        }, 5000);
-        return
-      }
-
-      // api error logic 
-      // toast.update(id, { render: res.data.message, type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    }).catch(err => {
-      console.log(err)
-      // toast.update(id, { render: "some thing went wrong", type: "error", isLoading: false });
-      setTimeout(() => {
-        // toast.dismiss(id)
-      }, 5000);
-    })
-  }
+    api.productResourceApi.boxsleeve.Delete(ids, () => {
+      disapatch(fetchboxsleeve());
+    });
+  };
 
   const handleOpenPopover = (event) => {
     setOpenPopover(event.currentTarget);
@@ -173,13 +110,26 @@ function BoxSleeve() {
 
   return (
     <Card>
-      <Stack spacing={2} className='my-3' sx={{ p: 2 }} direction='row' alignItems='center' justifyContent='space-between'  >
+      <Stack
+        spacing={2}
+        className="my-3"
+        sx={{ p: 2 }}
+        direction="row"
+        alignItems="center"
+        justifyContent="space-between"
+      >
         <b>Box & Sleeve</b>
-        <Button variant="contained" onClick={() => {
-          setUpdate(false)
-          setData(boxsleev)
-          setOpen(!open)
-        }} color="primary">Create New Box & Sleeve</Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            setUpdate(false);
+            setData(boxsleev);
+            setOpen(!open);
+          }}
+          color="primary"
+        >
+          Create New Box & Sleeve
+        </Button>
       </Stack>
       {/* <Card> */}
       <TableContainer sx={{ position: 'relative', overflow: 'unset' }}>
@@ -187,9 +137,8 @@ function BoxSleeve() {
           <Table stickyHeader aria-label="sticky table">
             <TableHeadCustom headLabel={TABLE_HEAD} />
             <TableBody>
-
-              {boxsleev ? boxsleev.map((row, key) =>
-                <>
+              {boxsleev ? (
+                boxsleev.map((row, key) => (
                   <TableRow hover>
                     <TableCell padding="checkbox">
                       <Checkbox />
@@ -214,42 +163,34 @@ function BoxSleeve() {
                     {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
 
                     <TableCell align="right">
-                      <IconButton color={openPopover ? 'primary' : 'default'} onClick={handleOpenPopover}>
-                        <Iconify icon="eva:more-vertical-fill" />
-                      </IconButton>
+                      <Stack direction="row" alignItems="center" spacing={2}>
+                        <IconButton
+                          color="primary"
+                          onClick={() => {
+                            setData(row);
+                            setUpdate(!update);
+                            setOpen(!open);
+                            // handleClosePopover();
+                          }}
+                        >
+                          <Iconify icon="eva:edit-fill" />
+                        </IconButton>
+                        <IconButton
+                          color="error"
+                          onClick={() => {
+                            deleteFnc(row.id);
+                            // handleClosePopover();
+                          }}
+                        >
+                          <Iconify icon="eva:trash-2-outline" />
+                        </IconButton>
+                      </Stack>
                     </TableCell>
                   </TableRow>
-                  <MenuPopover
-                    open={openPopover}
-                    onClose={handleClosePopover}
-                    arrow="right-top"
-                    sx={{ width: 140, boxShadow: 'none' }}
-                  >
-                    <MenuItem
-                      onClick={() => {
-                        deleteFnc(row.id)
-                        handleClosePopover();
-                      }}
-                      sx={{ color: 'error.main' }}
-                    >
-                      <Iconify icon="eva:trash-2-outline" />
-                      Delete
-                    </MenuItem>
-
-                    <MenuItem
-                      onClick={() => {
-                        setData(row);
-                        setUpdate(!update);
-                        setOpen(!open);
-                        handleClosePopover();
-                      }}
-                    >
-                      <Iconify icon="eva:edit-fill" />
-                      Edit
-                    </MenuItem>
-                  </MenuPopover>
-                </>
-              ) : <TableNoData isNotFound={1} />}
+                ))
+              ) : (
+                <TableNoData isNotFound={1} />
+              )}
             </TableBody>
           </Table>
         </Scrollbar>
@@ -259,18 +200,21 @@ function BoxSleeve() {
       <Dialog
         open={open}
         onClose={() => {
-          setUpdate(false)
-          setOpen(!open)
+          setUpdate(false);
+          setOpen(!open);
         }}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
-        <DialogTitle>
-          Create New Box & Sleeve
-        </DialogTitle>
+        <DialogTitle>Create New Box & Sleeve</DialogTitle>
         <DialogContent>
           <Stack spacing={2} sx={{ marginTop: 1 }}>
-            <TextField fullWidth label='Cover Name' onChange={(e) => setData({ ...data, name: e.target.value })} value={data.name} />
+            <TextField
+              fullWidth
+              label="Cover Name"
+              onChange={(e) => setData({ ...data, name: e.target.value })}
+              value={data.name}
+            />
             {/* <Select name="" onChange={(e) => setData({ ...data, type: e.target.value })} id=""  label='Type'>
               <MenuItem value="img">img</MenuItem>
               <MenuItem value="regular">regular</MenuItem>
@@ -278,30 +222,52 @@ function BoxSleeve() {
               <MenuItem value="acrylic">acrylic</MenuItem>
             </Select> */}
             <FormControl fullWidth sx={{ textAlign: 'left' }}>
-              <InputLabel id="demo-simple-select-helper-label" sx={{ backgroundColor: '#fff', paddingLeft: 1, paddingRight: 1 }}>Type</InputLabel>
-              <Select name="" onChange={(e) => setData({ ...data, type: e.target.value })} id=""  label='Type' sx={{ color: '#000' }}>
-                <MenuItem value="img">img</MenuItem>
-                <MenuItem value="regular">regular</MenuItem>
-                <MenuItem value="canvas">canvas</MenuItem>
-                <MenuItem value="acrylic">acrylic</MenuItem>
+              <InputLabel
+                id="demo-simple-select-helper-label"
+                sx={{ backgroundColor: '#fff', paddingLeft: 1, paddingRight: 1 }}
+              >
+                Type
+              </InputLabel>
+              <Select
+                name=""
+                onChange={(e) => setData({ ...data, type: e.target.value })}
+                id=""
+                defaultValue={data.type}
+                label="Type"
+                sx={{ color: '#000' }}
+              >
+                <MenuItem value="img_option_colors">Single Image + Option + Colors</MenuItem>
+                <MenuItem value="option_colors">Option + Colors</MenuItem>
+                <MenuItem value="both_img">Both Side Image + No Option</MenuItem>
               </Select>
             </FormControl>
 
-            <TextField type='file' fullWidth placeholder='Orientation Name' onChange={(e) => setData({ ...data, img: e.target.files[0] })} />
+            <TextField
+              type="file"
+              fullWidth
+              placeholder="Orientation Name"
+              onChange={(e) => setData({ ...data, img: e.target.files[0] })}
+            />
           </Stack>
           <DialogActions>
-            {update ?
+            {update ? (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="warning" onClick={updateOrientation} >Update</Button>
-              </div> :
+                <Button variant="contained" fullWidth color="warning" onClick={updateOrientation}>
+                  Update
+                </Button>
+              </div>
+            ) : (
               <div className="my-3">
-                <Button variant="contained" fullWidth color="primary" onClick={submit} >Create</Button>
-              </div>}
+                <Button variant="contained" fullWidth color="primary" onClick={submit}>
+                  Create
+                </Button>
+              </div>
+            )}
           </DialogActions>
         </DialogContent>
-      </Dialog >
+      </Dialog>
     </Card>
-  )
+  );
 }
 
-export default BoxSleeve
+export default BoxSleeve;

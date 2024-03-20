@@ -136,14 +136,16 @@ export default function InvoiceListPage() {
     const getLengthByStatus = (status) => tableData.filter((item) => item.order_status === status).length;
     // eslint-disable-next-line eqeqeq
     const getSampleOrder = () => tableData.filter((item) => item.is_sample == 1).length;
-
     const getPercentByStatus = (status) => (getLengthByStatus(status) / tableData.length) * 100;
 
     const TABS = [
         { value: 'All Orders', label: 'All Orders', color: 'info', count: tableData.length },
         { value: 'Completed Orders', label: 'Completed Orders', color: 'success', count: getLengthByStatus('completed') },
         { value: 'Pending Orders', label: 'Pending Orders', color: 'warning', count: getLengthByStatus('pending') },
-        { value: 'Sampel Orders', label: 'Sampel Orders', color: 'info', count: getSampleOrder('pending') },
+        { value: 'Processing Orders', label: 'Processing Orders', color: 'default', count: getLengthByStatus('processing') },
+        { value: 'Cancel Orders', label: 'Cancel Orders', color: 'error', count: getLengthByStatus('cancel') },
+        { value: 'dispatch Orders', label: 'dispatch Orders', color: 'info', count: getLengthByStatus('dispatch') },
+        { value: 'Sampel Orders', label: 'Sampel Orders', color: 'info', count: getSampleOrder('dispatch') },
     ];
 
     const handleOpenConfirm = () => {
@@ -167,11 +169,16 @@ export default function InvoiceListPage() {
             return (
                 customer.name.toLowerCase().includes(searchParam.toLowerCase()) ||
                 customer.phone_no.toString().includes(searchParam) ||
+                customer.email.toString().includes(searchParam) ||
                 orderNo.includes(searchParam)
             );
         });
 
-        setTableData(results);
+        if (searchParam === "") {
+            handleResetFilter()
+        } else {
+            setTableData(results);
+        }
     };
 
     const handleDeleteRow = (id) => {
@@ -344,12 +351,6 @@ export default function InvoiceListPage() {
                                             <Iconify icon="eva:printer-fill" />
                                         </IconButton>
                                     </Tooltip>
-
-                                    <Tooltip title="Delete">
-                                        <IconButton color="primary" onClick={handleOpenConfirm}>
-                                            <Iconify icon="eva:trash-2-outline" />
-                                        </IconButton>
-                                    </Tooltip>
                                 </Stack>
                             }
                         />
@@ -443,7 +444,9 @@ function applyFilter({
     filterName,
     filterStatus
 }) {
-
+    
+    console.log(filterStatus);
+    console.log(inputData);
     if (filterStatus === "Completed Orders") {
         inputData = inputData.filter((invoice) => invoice.order_status === "completed");
         return inputData
@@ -454,6 +457,19 @@ function applyFilter({
     }
     if (filterStatus === "Sampel Orders") {
         inputData = inputData.filter((invoice) => invoice.is_sample === 1);
+        return inputData;
+    }
+    if (filterStatus === "Processing Orders") {
+        inputData = inputData.filter((invoice) => invoice.order_status === "processing");
+        return inputData;
+    }
+    if (filterStatus === "Cancel Orders") {
+        inputData = inputData.filter((invoice) => invoice.order_status === "cancel");
+        return inputData;
+    }
+    if (filterStatus === "dispatch Orders") {
+        inputData = inputData.filter((invoice) => invoice.order_status === "dispatch");
+        console.log(inputData);
         return inputData;
     }
 

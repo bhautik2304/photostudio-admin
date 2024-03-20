@@ -51,7 +51,7 @@ export default function Header({ onOpenNav }) {
       )}
 
       {/* <Searchbar />
-      <Alert /> */}
+      */}
       <Stack
         flexGrow={1}
         direction="row"
@@ -61,7 +61,7 @@ export default function Header({ onOpenNav }) {
       >
         {/* <LanguagePopover />
             <ContactsPopover /> */}
-        {/* <NotificationsPopover /> */}
+        <NotificationsPopover />
         <AccountPopover />
       </Stack>
     </>

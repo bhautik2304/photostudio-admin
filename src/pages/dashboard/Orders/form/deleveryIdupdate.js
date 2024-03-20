@@ -20,32 +20,10 @@ DeleveryIdupdate.propTypes = {
 
 export default function DeleveryIdupdate({ data }) {
 
-  const [orderData, setOrderData] = useState({
-    discount: 0,
-    discountAmount: 0,
-    orderValue: 0,
-  });
-
-  const setDiscount = (value) => {
-    setOrderData({
-      ...orderData,
-      discount: value,
-      discountAmount: (Number(data?.order_total) * value) / 100,
-      orderValue: (Number(data?.order_total) - ((Number(data?.order_total) * value) / 100)),
-    });
-  }
-
- 
-
-  useEffect(() => {
-    setOrderData({ ...orderData, orderValue: data?.order_total });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
-
-
-  const paperPrice = (sheetValue, paperValue) => ((sheetValue * paperValue) / 100) + sheetValue;
-
-  const fCurrency = (sign, val) => `${sign} ${val}`
+  const [deliveriInstructon, setDeliveriInstructon] = useState({
+    parnerlink: data?.delivery_partner_link || "xyz.com",
+    deliverycode: data?.delivery_tracking_no || 0
+  })
 
   return (
     <Box sx={{ p: 4 }}>
@@ -63,6 +41,8 @@ export default function DeleveryIdupdate({ data }) {
                   label="Delivery / Tracking Number"
                   InputLabelProps={{ shrink: true }}
                   fullWidth
+                  onChange={(e) => setDeliveriInstructon({ ...deliveriInstructon, deliverycode: e.target.value })}
+                  value={deliveriInstructon.deliverycode}
                   sx={{ color: 'red' }}
 
                 />
@@ -73,6 +53,8 @@ export default function DeleveryIdupdate({ data }) {
                   label="Delivery Partner Link"
                   InputLabelProps={{ shrink: true }}
                   fullWidth
+                  onChange={(e) => setDeliveriInstructon({ ...deliveriInstructon, parnerlink: e.target.value })}
+                  value={deliveriInstructon.parnerlink}
                 />
               </Grid>
               <Grid item xs={12} md={10}>
