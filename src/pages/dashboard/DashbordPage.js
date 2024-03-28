@@ -3,18 +3,14 @@ import { useNavigate } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 // @mui
 import { useTheme } from '@mui/material/styles';
-import { Container, Grid, Button } from '@mui/material';
+import { Container, Grid, Button, ListItemIcon } from '@mui/material';
 import { useSelector } from 'react-redux';
-// auth
-import { useAuthContext } from '../../auth/useAuthContext';
-// _mock_
-import {
-  _ecommerceNewProducts,
-  _ecommerceSalesOverview,
-  _ecommerceBestSalesman,
-  _barGraphUserOverview,
-  _ecommerceLatestProducts,
-} from '../../_mock/arrays';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import DeleteIcon from '@mui/icons-material/Delete';
 // components
 import { useSettingsContext } from '../../components/settings';
 // sections
@@ -32,7 +28,17 @@ import { AppWelcome } from '../../sections/@dashboard/general/app';
 // assets
 import { MotivationIllustration } from '../../assets/illustrations';
 import { PATH_DASHBOARD } from '../../routes/paths';
-
+// auth
+import { useAuthContext } from '../../auth/useAuthContext';
+// _mock_
+import {
+  _ecommerceNewProducts,
+  _ecommerceSalesOverview,
+  _ecommerceBestSalesman,
+  _barGraphUserOverview,
+  _ecommerceLatestProducts,
+} from '../../_mock/arrays';
+// import ShoppingBagIcon from '@mui/icons-material/ShoppingBag';
 // ----------------------------------------------------------------------
 
 export default function GeneralEcommercePage() {
@@ -71,31 +77,80 @@ export default function GeneralEcommercePage() {
             />
           </Grid>
 
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} sx={{ position: 'relative', overflow: 'hidden' }}>
             <EcommerceWidgetSummary
               title="Total Product"
               total={1}
+              sx={{
+                background: "#007fff7a",
+                color: "#fff"
+              }}
+            />
+            <ShoppingBagIcon
+              sx={{
+                position: 'absolute',
+                right: "-0.25em",
+                color: "#ffffff70",
+                fontSize: "12em",
+                bottom: "-0.4em",
+              }}
             />
           </Grid>
-
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} sx={{ position: 'relative', overflow: 'hidden' }}>
             <EcommerceWidgetSummary
               title="Total Orders"
               total={data?.order?.orders?.length}
+              sx={{
+                background: "#ff00007a",
+                color: "#fff"
+              }}
+            />
+            <ShoppingCartIcon
+              sx={{
+                position: 'absolute',
+                right: "-0.15em",
+                color: "#ffffff70",
+                fontSize: "8em",
+                bottom: "-0.25em",
+              }}
             />
           </Grid>
-
-
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} sx={{ position: 'relative', overflow: 'hidden' }}>
             <EcommerceWidgetSummary
               title="Total Approved Customers"
               total={data?.customer?.customer.filter(datas => datas.approved === 1).length}
+              sx={{
+                background: "#9b00ff4f",
+                color: "#fff"
+              }}
+            />
+            <VerifiedUserIcon
+              sx={{
+                position: 'absolute',
+                right: "-0.15em",
+                color: "#ffffff70",
+                fontSize: "8em",
+                bottom: "-0.25em",
+              }}
             />
           </Grid>
-          <Grid item xs={12} md={3}>
+          <Grid item xs={12} md={3} sx={{ position: 'relative', overflow: 'hidden' }}>
             <EcommerceWidgetSummary
               title="New Customer Request"
               total={data?.customer?.customer.filter(datas => datas.approved === 0).length}
+              sx={{
+                background: "#ff360066",
+                color: "#fff"
+              }}
+            />
+            <PersonAddIcon
+              sx={{
+                position: 'absolute',
+                right: "-0.15em",
+                color: "#ffffff70",
+                fontSize: "8em",
+                bottom: "-0.2em",
+              }}
             />
           </Grid>
 
@@ -113,7 +168,7 @@ export default function GeneralEcommercePage() {
           <Grid item xs={12} md={12} lg={12}>
             <EcommerceBestSalesman
               title="Customers Request"
-              tableData={data?.user?.users.filter((customer) => customer.approved === 0)}
+              tableData={data?.customer?.customer?.filter((customer) => customer.approved === 0)}
               tableLabels={[
                 { id: 'Name', label: 'Name / Email' },
                 { id: 'Contact', label: 'Contact No' },

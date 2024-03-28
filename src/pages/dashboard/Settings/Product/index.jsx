@@ -13,6 +13,7 @@ import {
   IconButton,
   TableContainer,
   TextField,
+  InputLabel,
   Grid,
   Switch,
   Label,
@@ -44,7 +45,11 @@ import { useSettingsContext } from '../../../../components/settings';
 import { api } from '../../../../Api/api';
 import { fetchproduct } from '../../../../redux/thunk/index';
 
-const TABLE_HEAD = [{ id: 'name', label: 'Product', align: 'left' }, { id: '' }, { id: '' }];
+const TABLE_HEAD = [
+  { id: 'name', label: 'Product', align: 'left' }, 
+  { id: '', label: 'Created at', align: 'left' }, 
+  { id: '' }
+];
 
 const productData = {
   name: '',
@@ -309,7 +314,8 @@ function ProductList() {
               fullWidth
             />
             <FormControlLabel control={<Switch onChange={() => setData({ ...data, boxandsleeve: !data.boxandsleeve })} />} label="Show Box & Sleeve" />
-            <TextField sx={{ marginY: 2 }} type="file" fullWidth />
+            <InputLabel sx={{ color: '#777', marginBottom: '.5em', marginTop: '1em', fontSize: '.75em', display: 'block' }}>Upload Product Image</InputLabel>
+            <TextField type="file" fullWidth />
           </Grid>
         }
         action={

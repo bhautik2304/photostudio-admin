@@ -66,6 +66,7 @@ export default function NavSectionVertical({ data, sx, ...other }) {
               />
             ))}
             {/* <StyledItem onClick={() => alert("hello")} >
+              sfsd
             </StyledItem> */}
           </List>
         );

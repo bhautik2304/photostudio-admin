@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 // form
+import { Navigate, Link as RouterLink, useNavigate, useNavigation } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
@@ -33,6 +34,7 @@ import { fetchCustomer } from '../../../../redux/slices/customer';
 import Label from '../../../../components/label';
 import { api } from '../../../../Api/api';
 import { toastHandel } from '../../../../utils/toast';
+import { PATH_DASHBOARD } from '../../../../routes/paths';
 
 // ----------------------------------------------------------------------
 
@@ -49,6 +51,9 @@ export default function AccountGeneral() {
   const { customer } = useSelector(state => state.customer)
   const { countryzone } = useSelector(state => state.resource)
 
+  const navigate = useNavigate()
+
+
   const find = customer.filter(item => item.id === Number(id))[0]
 
   useEffect(() => {
@@ -60,16 +65,18 @@ export default function AccountGeneral() {
   const disapatch = useDispatch()
 
   const submit = () => {
-    const toastId = toast.loading("Updating Zone pls wait...")
+    const toastId = toast.loading("Updating Users pls wait...")
     setIsSubmitting(true)
-    axios.put(apiRoutes.costomer + id, datas)
+    axios.put(`${apiRoutes.costomer}/${id}`, datas)
       .then(res => {
-        enqueueSnackbar('Profile Updated', { variant: 'success' });
+        // enqueueSnackbar('Profile Updated', { variant: 'success' });
+        toast.update(toastId, { render: res.data.msg, type: 'success', isLoading: false });
         setIsSubmitting(false)
         disapatch(fetchCustomer())
       })
       .catch(err => {
-        enqueueSnackbar('Something Went Wrong', { variant: 'error' });
+        toast.update(toastId, { render: "Something Went Wrong", type: 'error', isLoading: false });
+        // enqueueSnackbar('Something Went Wrong', { variant: 'error' });
         setIsSubmitting(false)
       })
   }
@@ -116,7 +123,7 @@ export default function AccountGeneral() {
                           }
                         }
                         ).catch(err => {
-                          console.error('Error On Changing Customer Status',err);
+                          console.error('Error On Changing Customer Status', err);
                         })
                       }}
                     />
@@ -175,8 +182,14 @@ export default function AccountGeneral() {
               labelPlacement="start"
               control={
                 <Switch
-                  checked={true === false}
-                  onChange={(event) => { }}
+                  checked={datas?.email_veryfi}
+                  onChange={(event) => {
+                    axios.post(`${apiRoutes.costomer}/emailverifi/${id}`, {
+                      status: !datas?.email_veryfi
+                    }).then(() => {
+                      disapatch(fetchCustomer())
+                    })
+                  }}
                 />
               }
               label={
@@ -240,10 +253,22 @@ export default function AccountGeneral() {
             <TextField value={datas?.social_link_2} sx={{ marginTop: 3 }} label="Social Link 2" fullWidth onChange={(e) => setData({ ...datas, social_link_2: e.target.value })} />
 
 
-            <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
+            <Stack spacing={3} direction='row' justifyContent='flex-end' sx={{ mt: 3 }}>
 
               <LoadingButton variant="contained" onClick={() => submit()} loading={isSubmitting}>
                 Save Changes
+              </LoadingButton>
+              <LoadingButton variant="contained" color='error' onClick={() => {
+                axios.delete(`${apiRoutes.costomer}/${id}`, {
+                  status: !datas?.email_veryfi
+                }).then(() => {
+                  disapatch(fetchCustomer())
+                  navigate(PATH_DASHBOARD.customer.root, {
+                    replace: true
+                  })
+                })
+              }}>
+                Delete
               </LoadingButton>
             </Stack>
           </Card>

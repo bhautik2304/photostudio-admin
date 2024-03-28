@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react';
 // form
 import { Icon } from '@iconify/react';
 // @mui
+import { toast } from 'react-toastify';
 import {
-  Box, Stack, Button, Divider, Typography, Table, TextField, Grid, Card, TableBody, TableRow, TableHead, TableCell
+  Box, Stack, Divider, Typography, TextField, Grid,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 // utils
 import Iconify from '../../../../components/iconify';
+import adminAxios from '../../../../Api/adminAxios';
+import { apiRoutes, statusCode } from '../../../../constants';
 // components
 
 // ----------------------------------------------------------------------
@@ -25,6 +29,28 @@ export default function DeleveryIdupdate({ data }) {
     deliverycode: data?.delivery_tracking_no || 0
   })
 
+  const [state, setState] = useState(false)
+
+  const sentDetaild = () => {
+    const toastId = toast.loading('Please wait...');
+    adminAxios.post(`${apiRoutes.orderReq}/delivery/${data.id}`, deliveriInstructon).then((response) => {
+      if (response.data.code === statusCode.success) {
+        toast.update(toastId, { render: response.data.msg, type: 'success', isLoading: false });
+        setState(false)
+        setTimeout(() => {
+          toast.dismiss(toastId);
+        }, 5000);
+      }
+    }).catch(errors => {
+      console.error('Error in creating user:', errors);
+      toast.update(toastId, { render: "Somethig Went Wrong", type: 'error', isLoading: false });
+      setState(false)
+      setTimeout(() => {
+        toast.dismiss(toastId);
+      }, 5000);
+    });
+  }
+
   return (
     <Box sx={{ p: 4 }}>
       <Typography variant="h6" sx={{ color: 'text.', mb: 3 }}>
@@ -35,11 +61,11 @@ export default function DeleveryIdupdate({ data }) {
         <Stack alignItems="flex-end" spacing={1.5}>
           <Stack direction={{ xs: 'column', md: 'row' }} spacing={2} sx={{ width: 1 }}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <TextField
                   size="small"
                   label="Delivery / Tracking Number"
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
                   onChange={(e) => setDeliveriInstructon({ ...deliveriInstructon, deliverycode: e.target.value })}
                   value={deliveriInstructon.deliverycode}
@@ -47,18 +73,18 @@ export default function DeleveryIdupdate({ data }) {
 
                 />
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid item xs={12} md={4}>
                 <TextField
                   size="small"
                   label="Delivery Partner Link"
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
                   onChange={(e) => setDeliveriInstructon({ ...deliveriInstructon, parnerlink: e.target.value })}
                   value={deliveriInstructon.parnerlink}
                 />
               </Grid>
-              <Grid item xs={12} md={10}>
-                <Button variant="contained">Send Instructions to client</Button>
+              <Grid item xs={12} md={4}>
+                <LoadingButton variant="contained" onClick={sentDetaild} loading={state} >Send Instructions to client</LoadingButton>
               </Grid>
             </Grid>
           </Stack>

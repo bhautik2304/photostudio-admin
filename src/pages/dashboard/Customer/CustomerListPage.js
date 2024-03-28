@@ -40,7 +40,7 @@ import {
 import { UserTableToolbar, UserTableRow } from '../../../sections/@dashboard/user/list';
 // ----------------------------------------------------------------------
 
-const STATUS_OPTIONS = ['all', 'new reqest', 'inactive'];
+const STATUS_OPTIONS = ['all', 'new request', 'inactive'];
 
 const TABLE_HEAD = [
   { id: 'name', label: 'Name', align: 'left' },
@@ -125,7 +125,7 @@ export default function UserListPage() {
     setFilterStatus(newValue);
     if (newValue === 'all') {
       setTableData(customer.filter((row) => row.approved === 1))
-    } else if (newValue === 'new reqest') {
+    } else if (newValue === 'new request') {
       setTableData(customer.filter((row) => row.approved === 0))
     } else if (newValue === 'inactive') {
       setTableData(customer.filter((row) => row.status === 0))
@@ -140,7 +140,7 @@ export default function UserListPage() {
       // If the input value is empty, show all data
       if (filterStatus === 'all') {
         setTableData(customer.filter((row) => row.approved === 1 && row.status === 1))
-      } else if (filterStatus === 'new reqest') {
+      } else if (filterStatus === 'new request') {
         setTableData(customer.filter((row) => row.approved === 0))
       } else if (filterStatus === 'inactive') {
         setTableData(customer.filter((row) => row.status === 0))

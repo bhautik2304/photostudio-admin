@@ -7,6 +7,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router';
 import { Helmet } from 'react-helmet-async';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import DeleteIcon from '@mui/icons-material/Delete';
+
 import {
   Container,
   Stack,
@@ -54,6 +57,7 @@ import { useSnackbar } from '../../../../../components/snackbar';
 import SvgColor from '../../../../../components/svg-color/SvgColor';
 import { fetchproduct } from '../../../../../redux/thunk';
 import { apiRoutes } from '../../../../../constants';
+import adminAxios from '../../../../../Api/adminAxios';
 
 function Index() {
   const { id } = useParams();
@@ -141,8 +145,8 @@ function Index() {
                   </FormLabel>
                   <TextField fullWidth value={productData.min_page} size="small" />
                 </FormControl>
-                <Divider />
-                <center>Album Copy Price</center>
+                {/* <Divider /> */}
+                {/* <center>Album Copy Price</center>
                 {countryzone &&
                   productData &&
                   countryzone.map((data, key) => {
@@ -188,7 +192,7 @@ function Index() {
                         />
                       </FormControl>
                     );
-                  })}
+                  })} */}
               </Stack>
             </Grid>
             <Grid sm={6} xs={12} lg={6}>
@@ -197,13 +201,16 @@ function Index() {
                   Images
                 </Typography>
 
-                <Box sx={{ width: 250, height: 350, position: 'relative' }}>
+                {/* <Box sx={{ width: 250, height: 350, position: 'relative' }}> */}
+                <Box sx={{ width: '100%', height: 250, position: 'relative' }}>
                   <StyledDropZone
                     {...getRootProps()}
                     sx={{
                       ...(isDragActive && {
                         opacity: 0.72,
                       }),
+                      width: '100%',
+                      height: '100%',
                     }}
                   >
                     <input {...getInputProps()} />
@@ -211,6 +218,60 @@ function Index() {
                     <SingleFilePreview file={value || productData?.img} />
                   </StyledDropZone>
                 </Box>
+              </Stack>
+            </Grid>
+            <Grid sm={6} xs={12} lg={6}>
+              <Stack flex="colum" spacing={2} padding={5}>
+                <left>Album Copy Price</left>
+                {countryzone &&
+                  productData &&
+                  countryzone.map((data, key) => {
+                    console.log(data);
+                    return (
+                      <FormControl>
+                        <FormLabel>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                            Pocket Book Price In {`${data.zonename}`}
+                          </Typography>
+                        </FormLabel>
+                        <AlbumCopyPriceField
+                          fullWidth
+                          sign={data.currency_sign}
+                          productId={productData.id}
+                          zoneId={data.id}
+                          pricrData={productData.album_copy_price}
+                          size="small"
+                        />
+                      </FormControl>
+                    );
+                  })}
+              </Stack>
+            </Grid>
+            <Grid sm={6} xs={12} lg={6}>
+              <Stack flex="colum" spacing={2} padding={5}>
+                <left>Printig Price</left>
+                {countryzone &&
+                  productData &&
+                  countryzone.map((data, key) => {
+                    console.log(data);
+                    return (
+                      <FormControl>
+                        <FormLabel>
+                          <Typography variant="subtitle2" sx={{ color: 'text.secondary' }}>
+                            Printing Price In {`${data.zonename}`}
+                          </Typography>
+                        </FormLabel>
+                        <PritnigPrice
+                          fullWidth
+                          sign={data.currency_sign}
+                          productId={productData.id}
+                          zoneId={data.id}
+                          pricrData={productData.pritnig_price}
+                          size="small"
+                        />
+                      </FormControl>
+                    );
+                  })}
               </Stack>
             </Grid>
             <Stack flexDirection="row" width="100%" justifyContent="flex-end" alignItems="flex-end">
@@ -223,7 +284,9 @@ function Index() {
             <CardHeader title="Orientations" sx={{ padding: 0 }} />
             <Stack spacing={3} direction="row">
               {/* <Button onClick={() => setAddSizeModelShow(true)} >Add Size</Button> */}
-              <Button onClick={() => setAddOrientationModelShow(true)}>Add Orientation</Button>
+              <Button variant="contained" onClick={() => setAddOrientationModelShow(true)}>
+                Add Orientation
+              </Button>
             </Stack>
           </Stack>
           {productData
@@ -272,7 +335,7 @@ const AlbumCopyPriceField = ({ sign, productId, zoneId, pricrData }) => {
   const createPrice = () => {
     setLoad(true);
     axios
-      .post(`${apiRoutes.productReq}productalbumcopyprice/`, data)
+      .post(`${apiRoutes.productReq}/productalbumcopyprice/`, data)
       .then((e) => {
         dispatch(fetchproduct());
         setLoad(false);
@@ -285,7 +348,7 @@ const AlbumCopyPriceField = ({ sign, productId, zoneId, pricrData }) => {
   const updatePrice = () => {
     setLoad(true);
     axios
-      .put(`${apiRoutes.productReq}productalbumcopyprice/${albumcopyPrice?.id}`, data)
+      .put(`${apiRoutes.productReq}/productalbumcopyprice/${albumcopyPrice?.id}`, data)
       .then((e) => {
         setLoad(false);
         dispatch(fetchproduct());
@@ -322,7 +385,7 @@ const AlbumCopyPriceField = ({ sign, productId, zoneId, pricrData }) => {
 
 const Orientation = ({ data, setAddOrientationModelShow }) => {
   const [addSizeModelShow, setAddSizeModelShow] = useState(false);
-
+  const dispatchh = useDispatch();
   return (
     <>
       <Accordion sx={{ margin: 2, backgroundColor: colors.grey }} elevation={3}>
@@ -339,7 +402,20 @@ const Orientation = ({ data, setAddOrientationModelShow }) => {
               {data?.orientation?.name}
             </Typography>
             <Stack spacing={3} direction="row">
-              <Button onClick={() => setAddSizeModelShow(true)}>Add Size</Button>
+              <Button variant="contained" onClick={() => setAddSizeModelShow(true)}>
+                Add Size
+              </Button>
+              <IconButton
+                onClick={() => {
+                  adminAxios
+                    .delete(`${apiRoutes.productReq}/productorientation/${data.id}`)
+                    .then((e) => {
+                      dispatchh(fetchproduct());
+                    });
+                }}
+              >
+                <DeleteIcon color="error" />
+              </IconButton>
             </Stack>
           </Stack>
         </AccordionSummary>
@@ -366,24 +442,96 @@ const Size = ({ data }) => {
   const [addPapersShow, setAddPapersShow] = useState(false);
   const [addCoverShow, setAddCoverShow] = useState(false);
   const [addBoxsleeveShow, setAddBoxsleeveShow] = useState(false);
+
+  const dispatchh = useDispatch();
+
   return (
     <>
-      <Accordion sx={{ marginY: 0, width: '100%', backgroundColor: colors.grey }} elevation={3}>
+      <Accordion
+        sx={{ marginY: 0, width: '100%', backgroundColor: colors.grey, boxShadow: 'none' }}
+        elevation={3}
+      >
         <AccordionSummary
-          // sx={{}}
-          // expandIcon={<ExpandMoreIcon />}
+          sx={{ boxShadow: 'none', backgroundColor: '#ddd' }}
+          expandIcon={<ArrowDropDownIcon />}
           aria-controls="panel1-content"
           id="panel1-header"
         >
           <Stack>
-            <Typography color="text.primary" variant="subtitle1">
+            <Typography
+              color="text.primary"
+              variant="subtitle1"
+              sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+            >
               Size : {data?.size?.name}
+              <IconButton
+                onClick={() => {
+                  adminAxios.delete(`${apiRoutes.productReq}/productsize/${data.id}`).then((e) => {
+                    dispatchh(fetchproduct());
+                  });
+                }}
+              >
+                <DeleteIcon color="error" />
+              </IconButton>
             </Typography>
           </Stack>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails sx={{ boxShadow: 'none' }}>
           {/* Sheet type */}
-          <Accordion sx={{ backgroundColor: colors.grey }} elevation={3}>
+          <Accordion
+            sx={{
+              backgroundColor: colors.grey,
+              boxShadow: 'none',
+              border: '1px solid #ddd',
+              marginTop: '2em',
+              borderRadius: '5px',
+            }}
+            elevation={3}
+          >
+            <AccordionSummary
+              sx={{ boxShadow: 'none', display: 'block' }}
+              // expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              <CardHeader
+                title={
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={3}
+                    justifyContent="space-between"
+                    sx={{ width: '100%', padding: 0 }}
+                  >
+                    <Typography variant="h6">Paper Sheet</Typography>
+                    <Button variant="contained" onClick={() => setAddsheetShow(true)}>
+                      Add Paper Sheet
+                    </Button>
+                  </Stack>
+                }
+                sx={{ display: 'block', padding: '0px' }}
+              />
+            </AccordionSummary>
+            <AccordionDetails>
+              <CardContent>
+                {data?.sheet.map((datas, key) => (
+                  <ProductSheet data={datas} />
+                ))}
+              </CardContent>
+            </AccordionDetails>
+          </Accordion>
+
+          {/* paper type */}
+          <Accordion
+            sx={{
+              marginY: 5,
+              backgroundColor: colors.grey,
+              boxShadow: 'none',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+            }}
+            elevation={3}
+          >
             <AccordionSummary
               // sx={{}}
               // expandIcon={<ExpandMoreIcon />}
@@ -399,34 +547,10 @@ const Size = ({ data }) => {
                     justifyContent="space-between"
                     sx={{ width: '100%', padding: 0 }}
                   >
-                    <Typography variant="h6">Paper Sheet</Typography>
-                    <Button onClick={() => setAddsheetShow(true)}>Add Paper Sheet</Button>
-                  </Stack>
-                }
-              />
-            </AccordionSummary>
-            <AccordionDetails>
-              <CardContent>
-                {data?.sheet.map((datas, key) => (
-                  <ProductSheet data={datas} />
-                ))}
-              </CardContent>
-            </AccordionDetails>
-          </Accordion>
-
-          {/* paper type */}
-          <Accordion sx={{ marginY: 5, backgroundColor: colors.grey }} elevation={3}>
-            <AccordionSummary
-              // sx={{}}
-              // expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1-content"
-              id="panel1-header"
-            >
-              <CardHeader
-                title={
-                  <Stack direction="row" alignItems="center" spacing={3}>
                     <Typography variant="h6">Paper Type</Typography>
-                    <Button onClick={() => setAddPapersShow(true)}>Add Paper Type</Button>
+                    <Button variant="contained" onClick={() => setAddPapersShow(true)}>
+                      Add Paper Type
+                    </Button>
                   </Stack>
                 }
               />
@@ -441,34 +565,90 @@ const Size = ({ data }) => {
           </Accordion>
 
           {/* Cover type */}
-          <CardHeader
-            title={
-              <Stack direction="row" alignItems="center" spacing={3}>
-                <Typography variant="h6">Product Cover</Typography>
-                <Button onClick={() => setAddCoverShow(true)}>Add Cover</Button>
-              </Stack>
-            }
-          />
-          <CardContent>
-            {data?.cover.map((datas, key) => (
-              <ProductCover data={datas} />
-            ))}
-          </CardContent>
+          <Accordion
+            sx={{
+              marginY: 5,
+              backgroundColor: colors.grey,
+              boxShadow: 'none',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+            }}
+            elevation={3}
+          >
+            <AccordionSummary
+              // sx={{}}
+              // expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              <CardHeader
+                title={
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={3}
+                    justifyContent="space-between"
+                    sx={{ width: '100%', padding: 0 }}
+                  >
+                    <Typography variant="h6">Product Cover</Typography>
+                    <Button variant="contained" onClick={() => setAddCoverShow(true)}>
+                      Add Cover
+                    </Button>
+                  </Stack>
+                }
+              />
+            </AccordionSummary>
+            <AccordionDetails>
+              <CardContent>
+                {data?.cover.map((datas, key) => (
+                  <ProductCover data={datas} />
+                ))}
+              </CardContent>
+            </AccordionDetails>
+          </Accordion>
 
           {/* Product Box & Sleeve type */}
-          <CardHeader
-            title={
-              <Stack direction="row" alignItems="center" spacing={3}>
-                <Typography variant="h6">Product Box & Sleeve</Typography>
-                <Button onClick={() => setAddBoxsleeveShow(true)}>Add Box & Sleeve</Button>
-              </Stack>
-            }
-          />
-          <CardContent>
-            {data?.boxsleeve.map((datas, key) => (
-              <ProductBoxsleeve data={datas} />
-            ))}
-          </CardContent>
+          <Accordion
+            sx={{
+              marginY: 5,
+              backgroundColor: colors.grey,
+              boxShadow: 'none',
+              border: '1px solid #ddd',
+              borderRadius: '5px',
+            }}
+            elevation={3}
+          >
+            <AccordionSummary
+              // sx={{}}
+              // expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1-content"
+              id="panel1-header"
+            >
+              <CardHeader
+                title={
+                  <Stack
+                    direction="row"
+                    alignItems="center"
+                    spacing={3}
+                    justifyContent="space-between"
+                    sx={{ width: '100%', padding: 0 }}
+                  >
+                    <Typography variant="h6">Product Box & Sleeve</Typography>
+                    <Button variant="contained" onClick={() => setAddBoxsleeveShow(true)}>
+                      Add Box & Sleeve
+                    </Button>
+                  </Stack>
+                }
+              />
+            </AccordionSummary>
+            <AccordionDetails>
+              <CardContent>
+                {data?.boxsleeve.map((datas, key) => (
+                  <ProductBoxsleeve data={datas} />
+                ))}
+              </CardContent>
+            </AccordionDetails>
+          </Accordion>
         </AccordionDetails>
       </Accordion>
 
@@ -492,9 +672,19 @@ const ProductSheet = ({ data }) => {
   const { countryzone } = useSelector((state) => state.resource);
   console.log('data');
   console.log(data);
+  const disapatch = useDispatch();
   return (
     <Grid container>
-      <Stack spacing={3} sx={{ marginTop: 3 }} direction="row">
+      <Stack spacing={3} sx={{ marginTop: 3, alignItems: 'center' }} direction="row">
+        <IconButton
+          onClick={() => {
+            adminAxios.delete(`${apiRoutes.productReq}/sheet/${data.id}`).then(() => {
+              disapatch(fetchproduct());
+            });
+          }}
+        >
+          <DeleteIcon sx={{ color: '#ff0000' }} />
+        </IconButton>
         <Grid item sm="3" xs="12" lg="3">
           <TextField fullWidth value={data.sheet.name} label="Paper Sheet" disabled />
         </Grid>
@@ -539,7 +729,7 @@ const PriceTextField = ({ price, label, sign, zoneId, productResourcePriceId, pa
   const createPrice = () => {
     setLoad(true);
     axios
-      .post(`${apiRoutes.productReq}${url}/`, data)
+      .post(`${apiRoutes.productReq}/${url}/`, data)
       .then((e) => {
         dispatch(fetchproduct());
         setLoad(false);
@@ -552,7 +742,7 @@ const PriceTextField = ({ price, label, sign, zoneId, productResourcePriceId, pa
   const updatePrice = () => {
     setLoad(true);
     axios
-      .put(`${apiRoutes.productReq}${url}/${productResourcePriceId}`, data)
+      .put(`${apiRoutes.productReq}/${url}/${productResourcePriceId}`, data)
       .then((e) => {
         setLoad(false);
         dispatch(fetchproduct());
@@ -596,7 +786,6 @@ const PriceTextField = ({ price, label, sign, zoneId, productResourcePriceId, pa
         type="number"
         label={label}
       />
-      
     </Grid>
   );
 };
@@ -622,7 +811,7 @@ const PritnigPrice = ({ sign, productId, zoneId, pricrData }) => {
   const createPrice = () => {
     setLoad(true);
     axios
-      .post(`${apiRoutes.productReq}printigprice/`, data)
+      .post(`${apiRoutes.productReq}/printigprice/`, data)
       .then((e) => {
         dispatch(fetchproduct());
         setLoad(false);
@@ -635,7 +824,7 @@ const PritnigPrice = ({ sign, productId, zoneId, pricrData }) => {
   const updatePrice = () => {
     setLoad(true);
     axios
-      .put(`${apiRoutes.productReq}printigprice/${albumcopyPrice?.id}`, data)
+      .put(`${apiRoutes.productReq}/printigprice/${albumcopyPrice?.id}`, data)
       .then((e) => {
         setLoad(false);
         dispatch(fetchproduct());
@@ -681,9 +870,23 @@ const ProductPapers = ({ data }) => {
   const { countryzone } = useSelector((state) => state.resource);
   console.log('data');
   console.log(data);
+  const disapatch = useDispatch();
   return (
     <Grid container>
-      <Stack spacing={3} sx={{ marginTop: 3 }} direction={{ lg: 'row', sm: 'row', xs: 'column' }}>
+      <Stack
+        spacing={3}
+        sx={{ marginTop: 3 }}
+        direction={{ lg: 'row', sm: 'row', xs: 'column', alignItems: 'center' }}
+      >
+        <IconButton
+          onClick={() => {
+            adminAxios.delete(`${apiRoutes.productReq}/productpaper/${data.id}`).then(() => {
+              disapatch(fetchproduct());
+            });
+          }}
+        >
+          <DeleteIcon sx={{ color: '#ff0000' }} />
+        </IconButton>
         <Grid item sm="6" xs="12" lg="6">
           <TextField fullWidth value={data.paper.name} label="Paper Type" disabled />
         </Grid>
@@ -704,9 +907,19 @@ const ProductCover = ({ data }) => {
   const { countryzone } = useSelector((state) => state.resource);
   console.log('data');
   console.log(data);
+  const disapatch = useDispatch();
   return (
     <Grid container>
-      <Stack spacing={3} sx={{ marginTop: 3 }} direction="row">
+      <Stack spacing={3} sx={{ marginTop: 3, alignItems: 'center' }} direction="row">
+        <IconButton
+          onClick={() => {
+            adminAxios.delete(`${apiRoutes.productReq}/productcover/${data.id}`).then(() => {
+              disapatch(fetchproduct());
+            });
+          }}
+        >
+          <DeleteIcon sx={{ color: '#ff0000' }} />
+        </IconButton>
         <Grid item sm="3" xs="12" lg="3">
           <TextField fullWidth value={data.cover.name} label="Cover Name" disabled />
         </Grid>
@@ -736,9 +949,19 @@ const ProductBoxsleeve = ({ data }) => {
   const { countryzone } = useSelector((state) => state.resource);
   console.log('data');
   console.log(data);
+  const disapatch = useDispatch();
   return (
     <Grid container>
-      <Stack spacing={3} sx={{ marginTop: 3 }} direction="row">
+      <Stack spacing={3} sx={{ marginTop: 3, alignItems: 'center' }} direction="row">
+        <IconButton
+          onClick={() => {
+            adminAxios.delete(`${apiRoutes.productReq}/productboxsleeve/${data.id}`).then(() => {
+              disapatch(fetchproduct());
+            });
+          }}
+        >
+          <DeleteIcon sx={{ color: '#ff0000' }} />
+        </IconButton>
         <Grid item sm="3" xs="12" lg="3">
           <TextField fullWidth value={data.boxsleeve.name} label="Box & Sleeve Type" disabled />
         </Grid>
@@ -783,7 +1006,7 @@ const AddOrientationModel = ({ show, onClose, productId }) => {
   };
 
   const storeOrientation = () => {
-    axios.post(`${apiRoutes.productReq}productorientation/`, data).then((e) => {
+    axios.post(`${apiRoutes.productReq}/productorientation/`, data).then((e) => {
       dispatch(fetchproduct());
       onClose();
     });
@@ -837,7 +1060,7 @@ const AddSizeModel = ({ show, onClose, productOrientationId }) => {
   };
 
   const storeSize = () => {
-    axios.post(`${apiRoutes.productReq}productsize/`, data).then((e) => {
+    axios.post(`${apiRoutes.productReq}/productsize/`, data).then((e) => {
       dispatch(fetchproduct());
       onClose();
     });
@@ -889,7 +1112,7 @@ const AddsheetModel = ({ show, onClose, sizeId }) => {
   };
 
   const storeSize = () => {
-    axios.post(`${apiRoutes.productReq}sheet/`, data).then((e) => {
+    axios.post(`${apiRoutes.productReq}/sheet/`, data).then((e) => {
       dispatch(fetchproduct());
       onClose();
     });
@@ -941,7 +1164,7 @@ const AddPapersModel = ({ show, onClose, sizeId }) => {
   };
 
   const storeSize = () => {
-    axios.post(`${apiRoutes.productReq}productpaper/`, data).then((e) => {
+    axios.post(`${apiRoutes.productReq}/productpaper/`, data).then((e) => {
       dispatch(fetchproduct());
       onClose();
     });
@@ -993,7 +1216,7 @@ const AddCoverModel = ({ show, onClose, sizeId }) => {
   };
 
   const storeSize = () => {
-    axios.post(`${apiRoutes.productReq}productcover/`, data).then((e) => {
+    axios.post(`${apiRoutes.productReq}/productcover/`, data).then((e) => {
       dispatch(fetchproduct());
       onClose();
     });
@@ -1045,7 +1268,7 @@ const AddBoxsleeveModel = ({ show, onClose, sizeId }) => {
   };
 
   const storeSize = () => {
-    axios.post(`${apiRoutes.productReq}productboxsleeve/`, data).then((e) => {
+    axios.post(`${apiRoutes.productReq}/productboxsleeve/`, data).then((e) => {
       dispatch(fetchproduct());
       onClose();
     });

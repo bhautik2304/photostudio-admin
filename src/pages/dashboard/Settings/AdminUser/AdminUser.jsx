@@ -23,6 +23,7 @@ import {
   InputLabel,
 } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
+import { Delete, Edit } from '@mui/icons-material';
 import { TableNoData, TableHeadCustom } from '../../../../components/table';
 import Scrollbar from '../../../../components/scrollbar';
 import Iconify from '../../../../components/iconify';
@@ -30,6 +31,7 @@ import MenuPopover from '../../../../components/menu-popover';
 import { fDate } from '../../../../utils/formatTime';
 import { api } from '../../../../Api/api';
 import { fetchAdminUsers } from '../../../../redux/slices/user';
+import { statusCode } from '../../../../constants';
 
 const TABLE_HEAD = [
   { id: 'invoiceNumber', label: '#', align: 'left' },
@@ -53,18 +55,17 @@ function AdminUser() {
   const [data, setData] = useState(countryzoneData);
   const [openPopover, setOpenPopover] = useState(null);
   const disapatch = useDispatch();
-  const [error,setError]=useState({
-    email:false,
-    mobile:false,
-  })
+  const [error, setError] = useState({
+    email: false,
+    mobile: false,
+  });
   const { users } = useSelector((state) => state.user);
 
   // create orientation
 
-
   const onSuccess = () => {
     setData(countryzoneData);
-    disapatch(fetchAdminUsers())
+    disapatch(fetchAdminUsers());
     setOpen(!open);
   };
   const oneRROR = () => {
@@ -101,13 +102,13 @@ function AdminUser() {
       () => {
         setUpdate(false);
         setOpen(!open);
-        disapatch(fetchAdminUsers())
-        setData(countryzoneData) 
+        disapatch(fetchAdminUsers());
+        setData(countryzoneData);
       },
       () => {
         setUpdate(false);
-        setOpen(!open); 
-        setData(countryzoneData) 
+        setOpen(!open);
+        setData(countryzoneData);
       }
     );
   };
@@ -130,7 +131,7 @@ function AdminUser() {
         }
 
         // success logic
-        if (res.data.success) {
+        if (res.data.code === statusCode.success) {
           toast.update(id, { render: res.data.message, type: 'success', isLoading: false });
           disapatch(fetchAdminUsers());
           setTimeout(() => {
@@ -192,63 +193,53 @@ function AdminUser() {
               <TableBody>
                 {users ? (
                   users.map((row, key) => (
-                    <>
-                      <TableRow hover>
-                        <TableCell padding="checkbox">
-                          <Checkbox />
-                        </TableCell>
+                    <TableRow hover>
+                      <TableCell padding="checkbox">
+                        <Checkbox />
+                      </TableCell>
 
-                        <TableCell>
-                          <Stack direction="row" alignItems="center" spacing={2}>
-                            {row.name}
-                          </Stack>
-                        </TableCell>
+                      <TableCell>
+                        <Stack direction="row" alignItems="center" spacing={2}>
+                          {row.name}
+                        </Stack>
+                      </TableCell>
 
-                        <TableCell>{row.phone_no}</TableCell>
-                        <TableCell>{row.email}</TableCell>
-                        <TableCell>{fDate(row.created_at)}</TableCell>
+                      <TableCell>{row.phone_no}</TableCell>
+                      <TableCell>{row.email}</TableCell>
+                      <TableCell>{fDate(row.created_at)}</TableCell>
 
-                        {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
+                      {/* <TableCell align="right">{fCurrency(price)}</TableCell> */}
 
-                        <TableCell align="right">
+                      {/* <TableCell align="right">
                           <IconButton
                             color={openPopover ? 'primary' : 'default'}
                             onClick={handleOpenPopover}
                           >
                             <Iconify icon="eva:more-vertical-fill" />
                           </IconButton>
-                        </TableCell>
-                      </TableRow>
-                      <MenuPopover
-                        open={openPopover}
-                        onClose={handleClosePopover}
-                        arrow="right-top"
-                        sx={{ width: 140, boxShadow: 'none' }}
-                      >
-                        <MenuItem
+                        </TableCell> */}
+                      <TableCell align="right">
+                        <IconButton
                           onClick={() => {
                             deleteFnc(row.id);
-                            handleClosePopover();
                           }}
                           sx={{ color: 'error.main' }}
                         >
-                          <Iconify icon="eva:trash-2-outline" />
-                          Delete
-                        </MenuItem>
-
-                        <MenuItem
+                          <Delete color="error" />
+                          {/* Delete */}
+                        </IconButton>
+                        <IconButton
                           onClick={() => {
                             setData({ ...row, password: '' });
-                            setUpdate(!update);
+                            setUpdate(true);
                             setOpen(!open);
                             handleClosePopover();
                           }}
                         >
-                          <Iconify icon="eva:edit-fill" />
-                          Edit
-                        </MenuItem>
-                      </MenuPopover>
-                    </>
+                          <Edit />
+                        </IconButton>
+                      </TableCell>
+                    </TableRow>
                   ))
                 ) : (
                   <TableNoData isNotFound={1} />

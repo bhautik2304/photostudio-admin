@@ -22,11 +22,11 @@ export const apiRoutes = {
     notifications: `${apiDomain}notifications`,
 }
 
-export const statusCode={
-    success:200,
-    created:201,
-    bad_request:400,
-    unauthorized:401,
-    unValidate:422,
-    internal_server_error:500,
+export const statusCode = {
+    success: 200,
+    created: 201,
+    bad_request: 400,
+    unauthorized: 401,
+    unValidate: 422,
+    internal_server_error: 500,
 }

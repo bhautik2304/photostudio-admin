@@ -22,22 +22,11 @@ import { logout } from '../../../redux/slices/AuthSlice';
 
 export default function AccountPopover() {
   const navigate = useNavigate();
-  
-  const { user } = useSelector(state=>state.auth)
-  
+
+  const { user } = useSelector(state => state.auth)
+
   const OPTIONS = [
-    {
-      label: 'Home',
-      linkTo: '/',
-    },
-    {
-      label: 'Profile',
-      linkTo: PATH_DASHBOARD.setting.userModule.adminuserProfile(user.id),
-    },
-    {
-      label: 'Settings',
-      linkTo: PATH_DASHBOARD.setting.userModule.adminuserProfile(user.id),
-    },
+
   ];
   const { enqueueSnackbar } = useSnackbar();
 
@@ -101,17 +90,6 @@ export default function AccountPopover() {
             {user?.email}
           </Typography>
         </Box>
-
-        <Divider sx={{ borderStyle: 'dashed' }} />
-
-        <Stack sx={{ p: 1 }}>
-          {OPTIONS.map((option) => (
-            <MenuItem key={option.label} onClick={() => handleClickItem(option.linkTo)}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Stack>
-
         <Divider sx={{ borderStyle: 'dashed' }} />
 
         <MenuItem onClick={handleLogout} sx={{ m: 1 }}>

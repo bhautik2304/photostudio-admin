@@ -12,9 +12,9 @@ export function HookComponents() {
 
 export const api = {
     notifications: {
-        getAll:()=>adminAxios(apiRoutes.notifications),
-        readAll:()=>adminAxios.put(`${apiRoutes.notifications}/read`),
-        deleteAll:()=>adminAxios.delete(`${apiRoutes.notifications}/delete`),
+        getAll: () => adminAxios(apiRoutes.notifications),
+        readAll: () => adminAxios.put(`${apiRoutes.notifications}/read`),
+        deleteAll: () => adminAxios.delete(`${apiRoutes.notifications}/delete`),
     },
     authApi: {
         login: (data, cache) => adminAxios.post(apiRoutes.login, data).catch((e) => {

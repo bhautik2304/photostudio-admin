@@ -30,11 +30,11 @@ nav {
   .simplebar-wrapper .MuiTypography-root.MuiTypography-inherit.MuiLink-root.MuiLink-underlineHover {
     text-align: center;
     display: block;
-    margin-bottom: 3em;
+    margin-bottom: 1em;
+    background: #fff;
     .MuiBox-root {
-      background: #fff;
       padding: 1em;
-      border-radius: 20em;
+      // border-radius: 20em;
     }
   }
   .MuiTypography-root.MuiTypography-inherit.MuiLink-root.MuiLink-underlineNone.css-poh7w4-MuiTypography-root-MuiLink-root {
@@ -98,6 +98,13 @@ header {
 
 .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiAccordion-root.MuiAccordion-rounded.Mui-expanded.MuiAccordion-gutters{
   box-shadow: 0 0px 15px 0px rgba(0, 0, 0, 0.16);
+}
+#panel1-content .MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiAccordion-root.MuiAccordion-rounded.Mui-expanded.MuiAccordion-gutters{
+  box-shadow: none;
+  border: 1px solid #ddd;
+}
+#panel1-header .MuiAccordionSummary-content{
+  display: block;
 }
 .MuiButtonBase-root.MuiAccordionSummary-root.MuiAccordionSummary-gutters{
   .css-13cp96e-MuiCardHeader-root{

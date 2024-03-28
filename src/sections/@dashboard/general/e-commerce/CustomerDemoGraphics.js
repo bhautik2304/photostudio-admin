@@ -29,7 +29,8 @@ const StyledChart = styled('div')(({ theme }) => ({
         position: 'relative !important',
         borderTop: `solid 1px ${theme.palette.divider}`,
         top: `calc(${CHART_HEIGHT - LEGEND_HEIGHT}px) !important`,
-    },
+    }
+
 }));
 
 // ----------------------------------------------------------------------
@@ -95,10 +96,10 @@ export default function EcommerceSaleByGender({ subheader, total, chart, ...othe
     });
 
     return (
-        <Card {...other} >
+        <Card {...other} sx={{height: '100%'}} >
             <CardHeader title="Customer Demographics" subheader={subheader} />
             <StyledChart dir="ltr">
-                <Chart type="donut" series={chartSeries} options={chartOptions} height={150} />
+                <Chart type="donut" series={chartSeries} options={chartOptions} height={170} sx={{marginTop: '50px'}} />
             </StyledChart>
         </Card>
     );

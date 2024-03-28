@@ -64,8 +64,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Porduct Name"
                   value={data?.product?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -74,8 +75,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   type="number"
                   label="Quantity"
                   value="1"
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -84,6 +86,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   type="number"
                   label="Price"
                   value="0"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
                   }}
@@ -96,6 +99,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Total"
                   value="0"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
                   }}
@@ -111,8 +115,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Paper Sheets & Paper Type"
                   value={`${data?.productsheet?.sheet?.name} + ( ${data?.productpaper?.paper?.name} ${data?.productpaper?.paper?.value}%)`}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -121,14 +126,16 @@ export default function InvoiceNewEditDetails({ data }) {
                   type="number"
                   label="Page Quantity"
                   value={data?.page_qty}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
                 <TextField
                   size="small"
                   label="Price"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   value={`${data?.sheetValue} + ${data?.productpaper?.paper?.value}% ( ${paperPrice(data?.sheetValue, data?.productpaper?.paper?.value)} )`}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
@@ -141,6 +148,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   disabled
                   size="small"
                   label="Total"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   value={Number(paperPrice(data?.sheetValue, data?.productpaper?.paper?.value)) * Number(data?.page_qty)}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
@@ -157,8 +165,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Cover"
                   value={`${data?.productcover?.cover?.name}`}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -167,8 +176,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   type="number"
                   label="Quantity"
                   value={1}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -176,6 +186,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   type="number"
                   label="Price"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   value={data?.coverValue}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
@@ -188,6 +199,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   disabled
                   size="small"
                   label="Total"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   value={data?.coverValue}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
@@ -204,8 +216,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Box & Sleeve"
                   value={`${data?.productboxsleeve?.boxsleeve?.name}`}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -214,8 +227,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   type="number"
                   label="Quantity"
                   value={1}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={3}>
@@ -223,6 +237,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   type="number"
                   label="Price"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   value={data?.boxSleeveValue}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
@@ -235,6 +250,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   disabled
                   size="small"
                   label="Total"
+                  InputLabelProps={{ style: { fontSize: '.875rem' } }}
                   value={data?.boxSleeveValue}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">{data?.countryzone?.currency_sign}</InputAdornment>,
@@ -248,7 +264,7 @@ export default function InvoiceNewEditDetails({ data }) {
 
       </Stack>
 
-      <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
+      <Divider sx={{ my: 3, borderStyle: 'dashed', borderColor: '#b4b4b4' }} />
 
       <Stack
         spacing={2}
@@ -267,6 +283,7 @@ export default function InvoiceNewEditDetails({ data }) {
             label="Discount"
             value={orderData.discount}
             type='number'
+            InputLabelProps={{ style: { fontSize: '.875rem' } }}
             onChange={(event) => setDiscount(Number(event.target.value))}
             InputProps={{
               startAdornment: <InputAdornment position="start">%</InputAdornment>,

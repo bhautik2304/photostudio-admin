@@ -55,11 +55,11 @@ export const StyledItem = styled(ListItemButton, {
     // Active sub item
     ...(subItem &&
       active && {
+      ...activeSubStyle,
+      '&:hover': {
         ...activeSubStyle,
-        '&:hover': {
-          ...activeSubStyle,
-        },
-      }),
+      },
+    }),
     // Disabled
     ...(disabled && {
       '&.Mui-disabled': {

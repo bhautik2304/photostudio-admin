@@ -16,7 +16,7 @@ import { capitalizeFirstLetter } from '../../../../utils/string';
 // ----------------------------------------------------------------------
 
 const PAYMET_STATUS_OPTIONS = ['pending', 'paid', 'credit'];
-const ORDER_STATUS_OPTIONS = ['pending', 'processing','dispatch', 'completed', 'cancel'];
+const ORDER_STATUS_OPTIONS = ['pending', 'processing', 'dispatch', 'completed', 'cancel'];
 
 // ----------------------------------------------------------------------
 
@@ -42,11 +42,11 @@ export default function InvoiceNewEditStatusDate({ data }) {
   const dispach = useDispatch()
 
   const orderStatus = (value) => {
-    axios.post(`${apiRoutes.orderReq}status/${data.id}`, { status: value }).then(res => dispach(fetchOrder())).catch(err => console.log(err))
+    axios.post(`${apiRoutes.orderReq}/status/${data.id}`, { status: value }).then(res => dispach(fetchOrder())).catch(err => console.log(err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
   const paymentStatus = (value) => {
-    axios.post(`${apiRoutes.orderReq}status/${data.id}/payment`, { status: value }).then(res => dispach(fetchOrder())).catch(err => console.log(err))
+    axios.post(`${apiRoutes.orderReq}/status/${data.id}/payment`, { status: value }).then(res => dispach(fetchOrder())).catch(err => console.log(err))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }
   return (

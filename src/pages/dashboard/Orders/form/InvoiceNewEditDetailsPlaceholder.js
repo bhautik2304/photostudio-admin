@@ -35,7 +35,7 @@ export default function InvoiceNewEditDetails({ data }) {
     });
   }
 
- 
+
 
   useEffect(() => {
     setOrderData({ ...orderData, orderValue: data?.order_total });
@@ -62,10 +62,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Porduct Name"
                   value={data?.product?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
-                  sx={{ color: 'red' }}
-
+                  sx={{ color: 'red', marginBottom: '1em' }}
                 />
               </Grid>
               <Grid item xs={12} md={2}>
@@ -73,8 +72,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Orientation"
                   value={data?.productorientation?.orientation?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -83,8 +83,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Size"
                   value={data?.productsize?.size?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -97,9 +98,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Paper Sheet"
                   value={data?.productsheet?.sheet?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
-                  sx={{ color: 'red' }}
+                  sx={{ color: 'red', marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -108,8 +109,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Paper Type"
                   value={data?.productpaper?.paper?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -118,8 +120,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Print Pages Quantity"
                   value={data?.page_qty}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -132,9 +135,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Album Cover"
                   value={data?.productcover?.cover?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
-                  sx={{ color: 'red' }}
+                  sx={{ color: 'red', marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -143,8 +146,9 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label=" Leather option"
                   value={data?.coversupgrade?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
+                  sx={{ marginBottom: '1em' }}
 
                 />
               </Grid>
@@ -156,7 +160,7 @@ export default function InvoiceNewEditDetails({ data }) {
                     label="Leather Color"
                     type='color'
                     value={data?.coversupgradecolor?.colorcode}
-                    InputLabelProps={{ shrink: true }}
+                    InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                     fullWidth
 
                   />
@@ -167,7 +171,7 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Cover Type"
                   value={data?.productcover?.cover?.type}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
 
                 />
@@ -189,14 +193,17 @@ export default function InvoiceNewEditDetails({ data }) {
                   size="small"
                   label="Box & Sleeve"
                   value={data?.productboxsleeve?.boxsleeve?.name}
-                  InputLabelProps={{ shrink: true }}
+                  InputLabelProps={{ shrink: true, style: { fontSize: '.875rem' } }}
                   fullWidth
                   sx={{ color: 'red' }}
 
                 />
               </Grid>
               <Grid item xs={12} md={4}>
-                <Button variant="outlined" fullWidth color='error' startIcon={<Icon icon="mdi:download" />}>
+                {/* <LoadingButton variant="contained" onClick={() => submit()} loading={isSubmitting}>
+                  Save Changes
+                </LoadingButton> */}
+                <Button variant="contained" fullWidth startIcon={<Icon icon="mdi:download" />}>
                   Download Photo Stack
                 </Button>
               </Grid>
@@ -207,6 +214,29 @@ export default function InvoiceNewEditDetails({ data }) {
       </Stack>
 
       <Divider sx={{ my: 3, borderStyle: 'dashed' }} />
+
+      <Grid container spacing={2}>
+        <Grid item xs={6} md={3} sx={{ my: 3 }} >
+          <Button variant="contained" fullWidth startIcon={<Icon icon="mdi:download" />}>
+            Covers front photo
+          </Button>
+        </Grid>
+        <Grid item xs={6} md={3} sx={{ my: 3 }}>
+          <Button variant="contained" fullWidth startIcon={<Icon icon="mdi:download" />}>
+            Covers back photo
+          </Button>
+        </Grid>
+        <Grid item xs={6} md={3} sx={{ my: 3 }}>
+          <Button variant="contained" fullWidth startIcon={<Icon icon="mdi:download" />}>
+            Box & sleve front photo
+          </Button>
+        </Grid>
+        <Grid item xs={6} md={3} sx={{ my: 3 }}>
+          <Button variant="contained" fullWidth startIcon={<Icon icon="mdi:download" />}>
+            Box & sleve back photo
+          </Button>
+        </Grid>
+      </Grid>
 
       <Grid container spacing={2}>
         <Grid item xs={12} md={12}>
@@ -230,7 +260,7 @@ export default function InvoiceNewEditDetails({ data }) {
           </Table>
         </Grid>
         <Grid item xs={12} md={12}>
-          <TextField name="description" label="Customize Message" multiline rows={3} cols="30" fullWidth value={data?.order_detaild?.customizeMessage} readOnly />
+          <TextField name="description" label="Customize Message" multiline rows={3} cols="30" fullWidth value={data?.order_detaild?.customizeMessage} InputLabelProps={{ style: { fontSize: '.875rem' } }} readOnly />
         </Grid>
       </Grid>
     </Box>
